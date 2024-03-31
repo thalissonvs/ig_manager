@@ -30,9 +30,11 @@ import sys
 from PyQt5.QtWidgets import QApplication
 
 from src.gui.views.main_view import MainView
+from src.gui.models.config_model import ConfigModel
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    main_view = MainView()
+    config_model = ConfigModel()
+    main_view = MainView(config_model)
     main_view.show()
     sys.exit(app.exec_())
