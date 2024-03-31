@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from ig_manager.guirc import imagens_rc
+from src.gui.resources import imagens_rc
 
 
 class GUIKwaiBot(object):

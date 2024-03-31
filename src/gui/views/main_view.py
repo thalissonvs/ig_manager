@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow
 
-from ig_manager.guirc.main_view_rc import GUIKwaiBot
+from src.gui.views.main_view import GUIKwaiBot
 
 
 class MainView(QMainWindow, GUIKwaiBot):

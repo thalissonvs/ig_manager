@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ig-manager"
+name = "src"
 version = "0.1.0"
 description = ""
 authors = ["Thiago <thiagofernandes305@gmail.com>"]

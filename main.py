@@ -29,7 +29,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from ig_manager.gui.views.main_view import MainView
+from src.gui.views.main_view import MainView
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
