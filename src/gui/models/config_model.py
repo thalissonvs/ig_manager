@@ -17,6 +17,7 @@ class ConfigModel(QObject):
     rest_goal_time_changed = pyqtSignal(int)
 
     def __init__(self) -> None:
+        super().__init__()
         self._time_between_actions_min = 0
         self._time_between_actions_max = 0
         self._actions_to_switch_account = 0
