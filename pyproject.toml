@@ -16,6 +16,7 @@ pyqt5-qt5 = "=5.15.2"
 weditor = "^0.7.2"
 blue = "^0.9.1"
 isort = "^5.13.2"
+coverage = "^7.4.4"
 
 [build-system]
 requires = ["poetry-core"]
