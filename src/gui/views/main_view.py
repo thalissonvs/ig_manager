@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
+from src.gui.constants import OptionsKeys
 from src.gui.controllers.config_controller import ConfigController
 from src.gui.models.config_model import ConfigModel
 from src.gui.resources.main_view_rc import IGBotGUI
@@ -18,26 +19,29 @@ class MainView(IGBotGUI, QMainWindow):
         self.config_controller = config_controller
         self.connect_config_model_signals()
         self.config_controller.set_options_if_valid()
+        self.config_controller.show_popup_signal.connect(self.show_popup)
         self.stackedWidget.setCurrentIndex(0)
         self.button_save_config.clicked.connect(self.save_options)
 
     def save_options(self) -> None:
-        options_object = {
-            'time_between_actions_min': self.get_time_between_actions_min_value(),
-            'time_between_actions_max': self.get_time_between_actions_max_value(),
-            'actions_to_switch_account': self.get_actions_to_switch_account_value(),
-            'switch_account_with_no_tasks': self.get_switch_account_with_no_tasks_value(),
-            'time_without_tasks_to_wait': self.get_time_without_tasks_to_wait_value(),
-            'perform_like_actions': self.get_perform_like_actions_value(),
-            'perform_follow_actions': self.get_perform_follow_actions_value(),
-            'enable_goal': self.get_enable_goal_value(),
-            'actions_goal': self.get_actions_goal_value(),
-            'enable_rest_goal': self.get_enable_rest_goal_value(),
-            'rest_goal_actions': self.get_rest_goal_actions_value(),
-            'rest_goal_time': self.get_rest_goal_time_value(),
-        }
+        options_object = self.get_options_object()
         self.config_controller.save_options(options_object)
-        self.show_popup('Successo!', 'Configurações salvas com sucesso!')
+
+    def get_options_object(self) -> dict:
+        return {
+            OptionsKeys.TIME_BETWEEN_ACTIONS_MIN: self.get_time_between_actions_min_value(),
+            OptionsKeys.TIME_BETWEEN_ACTIONS_MAX: self.get_time_between_actions_max_value(),
+            OptionsKeys.ACTIONS_TO_SWITCH_ACCOUNT: self.get_actions_to_switch_account_value(),
+            OptionsKeys.SWITCH_ACCOUNT_WITH_NO_TASKS: self.get_switch_account_with_no_tasks_value(),
+            OptionsKeys.TIME_WITHOUT_TASKS_TO_WAIT: self.get_time_without_tasks_to_wait_value(),
+            OptionsKeys.PERFORM_LIKE_ACTIONS: self.get_perform_like_actions_value(),
+            OptionsKeys.PERFORM_FOLLOW_ACTIONS: self.get_perform_follow_actions_value(),
+            OptionsKeys.ENABLE_GOAL: self.get_enable_goal_value(),
+            OptionsKeys.ACTIONS_GOAL: self.get_actions_goal_value(),
+            OptionsKeys.ENABLE_REST_GOAL: self.get_enable_rest_goal_value(),
+            OptionsKeys.REST_GOAL_ACTIONS: self.get_rest_goal_actions_value(),
+            OptionsKeys.REST_GOAL_TIME: self.get_rest_goal_time_value(),
+        }
 
     def show_popup(self, message: str, text: str) -> None:
         msg = QMessageBox()
