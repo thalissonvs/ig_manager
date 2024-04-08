@@ -17,46 +17,36 @@ class ConfigController(QObject):
         super().__init__()
         self.config_model = config_model
 
-    def set_default_options(self) -> None:
-        for key, value in DEFAULT_OPTIONS.items():
-            setattr(self.config_model, key, value)
-
     def set_options_if_valid(self) -> None:
-        options_content = (
-            open(self.OPTIONS_PATH, 'r').read()
-            if os.path.exists(self.OPTIONS_PATH)
-            else ''
-        )
+        
+        if not os.path.exists(self.OPTIONS_PATH):
+            self._set_model_attr(DEFAULT_OPTIONS)
+            return
+        
+        with open(self.OPTIONS_PATH, 'r') as f:
+            options_content = f.read()
 
         try:
             options = json.loads(options_content)
         except json.JSONDecodeError:
-            self.set_default_options()
+            self._set_model_attr(DEFAULT_OPTIONS)
             return
 
-        if not set(options.keys()) == set(DEFAULT_OPTIONS.keys()):
-            self.set_default_options()
+        try:
+            self._check_options_keys(options)
+        except AttributeError:
+            self._set_model_attr(DEFAULT_OPTIONS)
             return
 
         self.load_options(options)
-
+        
     def load_options(self, options: dict) -> None:
 
-        if not set(options.keys()) == set(DEFAULT_OPTIONS.keys()):
-            raise AttributeError('Invalid options keys')
-
-        for key, value in options.items():
-            if key in DEFAULT_OPTIONS:
-                setattr(self.config_model, key, value)
+        self._set_model_attr(options)
 
     def save_options(self, options: dict) -> None:
 
-        if not set(options.keys()) == set(DEFAULT_OPTIONS.keys()):
-            raise AttributeError('Invalid options keys')
-
-        for key, value in options.items():
-            if key in DEFAULT_OPTIONS:
-                setattr(self.config_model, key, value)
+        self._set_model_attr(options)
 
         with open(self.OPTIONS_PATH, 'w') as f:
             f.write(json.dumps(options, indent=4))
@@ -64,3 +54,15 @@ class ConfigController(QObject):
         self.show_popup_signal.emit(
             'Sucesso!', 'Configurações salvas com sucesso!'
         )
+
+    def _set_model_attr(self, options: dict) -> None:
+        
+        self._check_options_keys(options)
+        
+        for key, value in options.items():
+            if key in DEFAULT_OPTIONS:
+                setattr(self.config_model, key, value)
+    
+    def _check_options_keys(self, options: dict) -> None:
+        if not set(options.keys()) == set(DEFAULT_OPTIONS.keys()):
+            raise AttributeError('Invalid options keys')
