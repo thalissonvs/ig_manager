@@ -124,7 +124,6 @@ class TestMainView(TestCase):
         self.main_view.connect_config_model_signals()
 
         for signal in self.SIGNALS:
-            getattr(self.config_model, signal).connect.assert_called_once()
             getattr(self.config_model, signal).connect.assert_called_once_with(
                 getattr(
                     self.main_view,

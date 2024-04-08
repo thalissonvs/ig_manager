@@ -68,11 +68,25 @@ class TestGUIIntegration(TestCase):
         self.assertEqual(self.main_view.get_rest_goal_actions_value(), 60)
         self.assertEqual(self.main_view.get_rest_goal_time_value(), 70)
 
-    def test_config_controller_set_default_options_should_update_view(
+    def test_config_controller__set_model_attr_with_valid_params_should_update_view(
         self,
     ) -> None:
+        options = {
+            OptionsKeys.TIME_BETWEEN_ACTIONS_MIN: 5,
+            OptionsKeys.TIME_BETWEEN_ACTIONS_MAX: 10,
+            OptionsKeys.ACTIONS_TO_SWITCH_ACCOUNT: 50,
+            OptionsKeys.SWITCH_ACCOUNT_WITH_NO_TASKS: True,
+            OptionsKeys.TIME_WITHOUT_TASKS_TO_WAIT: 30,
+            OptionsKeys.PERFORM_LIKE_ACTIONS: True,
+            OptionsKeys.PERFORM_FOLLOW_ACTIONS: True,
+            OptionsKeys.ENABLE_GOAL: True,
+            OptionsKeys.ACTIONS_GOAL: 200,
+            OptionsKeys.ENABLE_REST_GOAL: True,
+            OptionsKeys.REST_GOAL_ACTIONS: 25,
+            OptionsKeys.REST_GOAL_TIME: 60,
+        }
 
-        self.config_controller.set_default_options()
+        self.config_controller._set_model_attr(options)
 
         self.assertEqual(
             self.main_view.get_time_between_actions_min_value(), 5
