@@ -31,12 +31,14 @@ from PyQt5.QtWidgets import QApplication
 
 from src.gui.controllers.config_controller import ConfigController
 from src.gui.models.config_model import ConfigModel
+from src.gui.repository.config_repository import ConfigRepository
 from src.gui.views.main_view import MainView
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     config_model = ConfigModel()
-    config_controller = ConfigController(config_model)
+    config_repository = ConfigRepository()
+    config_controller = ConfigController(config_model, config_repository)
     main_view = MainView(config_model, config_controller)
     main_view.show()
     sys.exit(app.exec_())
