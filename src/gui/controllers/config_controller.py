@@ -5,64 +5,50 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 from src.gui.constants import DEFAULT_OPTIONS
 from src.gui.models.config_model import ConfigModel
+from src.gui.repository.config_repository import ConfigRepository
 
 
 class ConfigController(QObject):
 
-    show_popup_signal = pyqtSignal(str, str)
+    config_changed = pyqtSignal(dict)
 
-    OPTIONS_PATH = os.path.join(os.getcwd(), 'userdata', 'options.json')
-
-    def __init__(self, config_model: ConfigModel) -> None:
+    def __init__(self, config_model: ConfigModel, config_repository: ConfigRepository) -> None:
         super().__init__()
         self.config_model = config_model
-
-    def set_options_if_valid(self) -> None:
-        
-        if not os.path.exists(self.OPTIONS_PATH):
-            self._set_model_attr(DEFAULT_OPTIONS)
-            return
-        
-        with open(self.OPTIONS_PATH, 'r') as f:
-            options_content = f.read()
-
-        try:
-            options = json.loads(options_content)
-        except json.JSONDecodeError:
-            self._set_model_attr(DEFAULT_OPTIONS)
-            return
-
-        try:
-            self._check_options_keys(options)
-        except AttributeError:
-            self._set_model_attr(DEFAULT_OPTIONS)
-            return
-
-        self.load_options(options)
-        
-    def load_options(self, options: dict) -> None:
-
-        self._set_model_attr(options)
+        self.config_repository = config_repository
+        self.config_model.config_changed.connect(self._emit_config_changed)
+    
+    def _emit_config_changed(self, config: dict) -> None:
+        self.config_changed.emit(config)
+    
+    def _set_options_to_model(self, options: dict) -> None:
+        for key, value in options.items():
+            setattr(self.config_model, key, value)
+    
+    def _set_options_to_repository(self, options: dict) -> None:
+        self.config_repository.set_options(options)
+    
+    def _get_options_from_repository(self) -> dict:
+        return self.config_repository.get_options()
 
     def save_options(self, options: dict) -> None:
-
-        self._set_model_attr(options)
-
-        with open(self.OPTIONS_PATH, 'w') as f:
-            f.write(json.dumps(options, indent=4))
-
-        self.show_popup_signal.emit(
-            'Sucesso!', 'Configurações salvas com sucesso!'
-        )
-
-    def _set_model_attr(self, options: dict) -> None:
-        
-        self._check_options_keys(options)
-        
-        for key, value in options.items():
-            if key in DEFAULT_OPTIONS:
-                setattr(self.config_model, key, value)
+        """
+        Método executado quando o usuário salva as opções.
+        A view chama esse método passando um dicionário com as opções.
+        Esse método então seta as opções no model e no repositório,
+        assim também persistindo as opções no arquivo de configuração.
+        """
+        self._set_options_to_model(options)
+        self._set_options_to_repository(options)
     
-    def _check_options_keys(self, options: dict) -> None:
-        if not set(options.keys()) == set(DEFAULT_OPTIONS.keys()):
-            raise AttributeError('Invalid options keys')
+    def set_initial_options(self) -> None:
+        """
+        Método responsável por setar as opções iniciais do programa.
+        Ele utiliza o repositório para buscar as opções salvas e aplica no model.
+        O model por sua vez, ao ser atualizado, emite um sinal que é capturado pela view.
+        E então a view atualiza os campos com os valores do model.
+        """
+        options = self._get_options_from_repository() or DEFAULT_OPTIONS        
+        self._set_options_to_model(options)
+
+    
