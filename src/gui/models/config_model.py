@@ -3,18 +3,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 class ConfigModel(QObject):
 
-    time_between_actions_min_changed = pyqtSignal(int)
-    time_between_actions_max_changed = pyqtSignal(int)
-    actions_to_switch_account_changed = pyqtSignal(int)
-    switch_account_with_no_tasks_changed = pyqtSignal(int)
-    time_without_tasks_to_wait_changed = pyqtSignal(int)
-    perform_like_actions_changed = pyqtSignal(bool)
-    perform_follow_actions_changed = pyqtSignal(bool)
-    enable_goal_changed = pyqtSignal(bool)
-    actions_goal_changed = pyqtSignal(int)
-    enable_rest_goal_changed = pyqtSignal(bool)
-    rest_goal_actions_changed = pyqtSignal(int)
-    rest_goal_time_changed = pyqtSignal(int)
+    config_changed = pyqtSignal(dict)
 
     def __init__(self) -> None:
         super().__init__()
@@ -30,6 +19,22 @@ class ConfigModel(QObject):
         self._enable_rest_goal = False
         self._rest_goal_actions = 0
         self._rest_goal_time = 0
+    
+    def get_config(self):
+        return {
+            'time_between_actions_min': self.time_between_actions_min,
+            'time_between_actions_max': self.time_between_actions_max,
+            'actions_to_switch_account': self.actions_to_switch_account,
+            'switch_account_with_no_tasks': self.switch_account_with_no_tasks,
+            'time_without_tasks_to_wait': self.time_without_tasks_to_wait,
+            'perform_like_actions': self.perform_like_actions,
+            'perform_follow_actions': self.perform_follow_actions,
+            'enable_goal': self.enable_goal,
+            'actions_goal': self.actions_goal,
+            'enable_rest_goal': self.enable_rest_goal,
+            'rest_goal_actions': self.rest_goal_actions,
+            'rest_goal_time': self.rest_goal_time
+        }
 
     @property
     def time_between_actions_min(self) -> int:
@@ -38,7 +43,7 @@ class ConfigModel(QObject):
     @time_between_actions_min.setter
     def time_between_actions_min(self, value: int) -> None:
         self._time_between_actions_min = value
-        self.time_between_actions_min_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def time_between_actions_max(self) -> int:
@@ -47,7 +52,7 @@ class ConfigModel(QObject):
     @time_between_actions_max.setter
     def time_between_actions_max(self, value: int) -> None:
         self._time_between_actions_max = value
-        self.time_between_actions_max_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def actions_to_switch_account(self) -> int:
@@ -56,7 +61,7 @@ class ConfigModel(QObject):
     @actions_to_switch_account.setter
     def actions_to_switch_account(self, value: int) -> None:
         self._actions_to_switch_account = value
-        self.actions_to_switch_account_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def switch_account_with_no_tasks(self) -> int:
@@ -65,7 +70,7 @@ class ConfigModel(QObject):
     @switch_account_with_no_tasks.setter
     def switch_account_with_no_tasks(self, value: int) -> None:
         self._switch_account_with_no_tasks = value
-        self.switch_account_with_no_tasks_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def time_without_tasks_to_wait(self) -> int:
@@ -74,7 +79,7 @@ class ConfigModel(QObject):
     @time_without_tasks_to_wait.setter
     def time_without_tasks_to_wait(self, value: int) -> None:
         self._time_without_tasks_to_wait = value
-        self.time_without_tasks_to_wait_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def perform_like_actions(self) -> bool:
@@ -83,7 +88,7 @@ class ConfigModel(QObject):
     @perform_like_actions.setter
     def perform_like_actions(self, value: bool) -> None:
         self._perform_like_actions = value
-        self.perform_like_actions_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def perform_follow_actions(self) -> bool:
@@ -92,7 +97,7 @@ class ConfigModel(QObject):
     @perform_follow_actions.setter
     def perform_follow_actions(self, value: bool) -> None:
         self._perform_follow_actions = value
-        self.perform_follow_actions_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def enable_goal(self) -> bool:
@@ -101,7 +106,7 @@ class ConfigModel(QObject):
     @enable_goal.setter
     def enable_goal(self, value: bool) -> None:
         self._enable_goal = value
-        self.enable_goal_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def actions_goal(self) -> int:
@@ -110,7 +115,7 @@ class ConfigModel(QObject):
     @actions_goal.setter
     def actions_goal(self, value: int) -> None:
         self._actions_goal = value
-        self.actions_goal_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def enable_rest_goal(self) -> bool:
@@ -119,7 +124,7 @@ class ConfigModel(QObject):
     @enable_rest_goal.setter
     def enable_rest_goal(self, value: bool) -> None:
         self._enable_rest_goal = value
-        self.enable_rest_goal_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def rest_goal_actions(self) -> int:
@@ -128,7 +133,7 @@ class ConfigModel(QObject):
     @rest_goal_actions.setter
     def rest_goal_actions(self, value: int) -> None:
         self._rest_goal_actions = value
-        self.rest_goal_actions_changed.emit(value)
+        self.config_changed.emit(self.get_config())
 
     @property
     def rest_goal_time(self) -> int:
@@ -137,4 +142,4 @@ class ConfigModel(QObject):
     @rest_goal_time.setter
     def rest_goal_time(self, value: int) -> None:
         self._rest_goal_time = value
-        self.rest_goal_time_changed.emit(value)
+        self.config_changed.emit(self.get_config())
