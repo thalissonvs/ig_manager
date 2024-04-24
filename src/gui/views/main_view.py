@@ -17,12 +17,25 @@ class MainView(IGBotGUI, QMainWindow):
         self.setupUi(self)
         self.config_model = config_model
         self.config_controller = config_controller
-        self.connect_config_model_signals()
-        self.config_controller.set_options_if_valid()
-        self.config_controller.show_popup_signal.connect(self.show_popup)
+        self.config_controller.config_changed.connect(self.set_options_at_view)
+        self.config_controller.set_initial_options()
         self.stackedWidget.setCurrentIndex(0)
         self.button_save_config.clicked.connect(self.save_options)
 
+    def set_options_at_view(self, options: dict) -> None:
+        self.set_time_between_actions_min_value(options[OptionsKeys.TIME_BETWEEN_ACTIONS_MIN])
+        self.set_time_between_actions_max_value(options[OptionsKeys.TIME_BETWEEN_ACTIONS_MAX])
+        self.set_actions_to_switch_account_value(options[OptionsKeys.ACTIONS_TO_SWITCH_ACCOUNT])
+        self.set_switch_account_with_no_tasks_value(options[OptionsKeys.SWITCH_ACCOUNT_WITH_NO_TASKS])
+        self.set_time_without_tasks_to_wait_value(options[OptionsKeys.TIME_WITHOUT_TASKS_TO_WAIT])
+        self.set_perform_like_actions_value(options[OptionsKeys.PERFORM_LIKE_ACTIONS])
+        self.set_perform_follow_actions_value(options[OptionsKeys.PERFORM_FOLLOW_ACTIONS])
+        self.set_enable_goal_value(options[OptionsKeys.ENABLE_GOAL])
+        self.set_actions_goal_value(options[OptionsKeys.ACTIONS_GOAL])
+        self.set_enable_rest_goal_value(options[OptionsKeys.ENABLE_REST_GOAL])
+        self.set_rest_goal_actions_value(options[OptionsKeys.REST_GOAL_ACTIONS])
+        self.set_rest_goal_time_value(options[OptionsKeys.REST_GOAL_TIME])
+    
     def save_options(self) -> None:
         options_object = self.get_options_object()
         self.config_controller.save_options(options_object)
@@ -49,44 +62,6 @@ class MainView(IGBotGUI, QMainWindow):
         msg.setText(text)
         msg.setIcon(QMessageBox.Information)
         msg.exec_()
-
-    def connect_config_model_signals(self) -> None:
-        self.config_model.time_between_actions_min_changed.connect(
-            self.set_time_between_actions_min_value
-        )
-        self.config_model.time_between_actions_max_changed.connect(
-            self.set_time_between_actions_max_value
-        )
-        self.config_model.actions_to_switch_account_changed.connect(
-            self.set_actions_to_switch_account_value
-        )
-        self.config_model.switch_account_with_no_tasks_changed.connect(
-            self.set_switch_account_with_no_tasks_value
-        )
-        self.config_model.time_without_tasks_to_wait_changed.connect(
-            self.set_time_without_tasks_to_wait_value
-        )
-        self.config_model.perform_like_actions_changed.connect(
-            self.set_perform_like_actions_value
-        )
-        self.config_model.perform_follow_actions_changed.connect(
-            self.set_perform_follow_actions_value
-        )
-        self.config_model.enable_goal_changed.connect(
-            self.set_enable_goal_value
-        )
-        self.config_model.actions_goal_changed.connect(
-            self.set_actions_goal_value
-        )
-        self.config_model.enable_rest_goal_changed.connect(
-            self.set_enable_rest_goal_value
-        )
-        self.config_model.rest_goal_actions_changed.connect(
-            self.set_rest_goal_actions_value
-        )
-        self.config_model.rest_goal_time_changed.connect(
-            self.set_rest_goal_time_value
-        )
 
     def set_time_between_actions_min_value(self, value: int) -> None:
         self.spinbox_min_time_actions.setValue(value)
