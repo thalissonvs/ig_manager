@@ -19,7 +19,7 @@ class ConfigModel(QObject):
         self._enable_rest_goal = False
         self._rest_goal_actions = 0
         self._rest_goal_time = 0
-    
+
     def get_config(self):
         return {
             'time_between_actions_min': self.time_between_actions_min,
@@ -33,7 +33,7 @@ class ConfigModel(QObject):
             'actions_goal': self.actions_goal,
             'enable_rest_goal': self.enable_rest_goal,
             'rest_goal_actions': self.rest_goal_actions,
-            'rest_goal_time': self.rest_goal_time
+            'rest_goal_time': self.rest_goal_time,
         }
 
     @property

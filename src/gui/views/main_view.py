@@ -23,19 +23,35 @@ class MainView(IGBotGUI, QMainWindow):
         self.button_save_config.clicked.connect(self.save_options)
 
     def set_options_at_view(self, options: dict) -> None:
-        self.set_time_between_actions_min_value(options[OptionsKeys.TIME_BETWEEN_ACTIONS_MIN])
-        self.set_time_between_actions_max_value(options[OptionsKeys.TIME_BETWEEN_ACTIONS_MAX])
-        self.set_actions_to_switch_account_value(options[OptionsKeys.ACTIONS_TO_SWITCH_ACCOUNT])
-        self.set_switch_account_with_no_tasks_value(options[OptionsKeys.SWITCH_ACCOUNT_WITH_NO_TASKS])
-        self.set_time_without_tasks_to_wait_value(options[OptionsKeys.TIME_WITHOUT_TASKS_TO_WAIT])
-        self.set_perform_like_actions_value(options[OptionsKeys.PERFORM_LIKE_ACTIONS])
-        self.set_perform_follow_actions_value(options[OptionsKeys.PERFORM_FOLLOW_ACTIONS])
+        self.set_time_between_actions_min_value(
+            options[OptionsKeys.TIME_BETWEEN_ACTIONS_MIN]
+        )
+        self.set_time_between_actions_max_value(
+            options[OptionsKeys.TIME_BETWEEN_ACTIONS_MAX]
+        )
+        self.set_actions_to_switch_account_value(
+            options[OptionsKeys.ACTIONS_TO_SWITCH_ACCOUNT]
+        )
+        self.set_switch_account_with_no_tasks_value(
+            options[OptionsKeys.SWITCH_ACCOUNT_WITH_NO_TASKS]
+        )
+        self.set_time_without_tasks_to_wait_value(
+            options[OptionsKeys.TIME_WITHOUT_TASKS_TO_WAIT]
+        )
+        self.set_perform_like_actions_value(
+            options[OptionsKeys.PERFORM_LIKE_ACTIONS]
+        )
+        self.set_perform_follow_actions_value(
+            options[OptionsKeys.PERFORM_FOLLOW_ACTIONS]
+        )
         self.set_enable_goal_value(options[OptionsKeys.ENABLE_GOAL])
         self.set_actions_goal_value(options[OptionsKeys.ACTIONS_GOAL])
         self.set_enable_rest_goal_value(options[OptionsKeys.ENABLE_REST_GOAL])
-        self.set_rest_goal_actions_value(options[OptionsKeys.REST_GOAL_ACTIONS])
+        self.set_rest_goal_actions_value(
+            options[OptionsKeys.REST_GOAL_ACTIONS]
+        )
         self.set_rest_goal_time_value(options[OptionsKeys.REST_GOAL_TIME])
-    
+
     def save_options(self) -> None:
         options_object = self.get_options_object()
         self.config_controller.save_options(options_object)
