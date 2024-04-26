@@ -7,12 +7,14 @@ class DeviceModel(QObject):
         self._device_id = ''
         self._model = ''
         self._android_version = ''
+        self._connection_type = ''
 
     def get_device_info(self) -> dict:
         return {
             'device_id': self.device_id,
             'model': self.model,
             'android_version': self.android_version,
+            'connection_type': self.connection_type
         }
 
     @property
@@ -38,6 +40,14 @@ class DeviceModel(QObject):
     @android_version.setter
     def android_version(self, value: str) -> None:
         self._android_version = value
+    
+    @property
+    def connection_type(self) -> str:
+        return self._connection_type
+    
+    @connection_type.setter
+    def connection_type(self, value: str) -> None:
+        self._connection_type = value
 
 
 class DevicesModel(QObject):
@@ -47,7 +57,7 @@ class DevicesModel(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self._devices = {}
+        self._devices: dict[str, DeviceModel] = {}
 
     def add_device(
         self, device_id: str, model: str, android_version: str
@@ -70,7 +80,10 @@ class DevicesModel(QObject):
         return devices
 
     def get_device(self, device_id: str) -> dict:
-        return self._devices[device_id].get_device_info()
+        device_index = list(self._devices.keys()).index(device_id)
+        device_info = self._devices[device_id].get_device_info()
+        device_info['index'] = device_index
+        return device_info
 
     def get_device_model(self, device_id: str) -> str:
         return self._devices[device_id].model
