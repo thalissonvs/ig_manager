@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
 from src.gui.constants import OptionsKeys
 from src.gui.controllers.config_controller import ConfigController
@@ -23,6 +23,24 @@ class MainView(IGBotGUI, QMainWindow):
         self.config_controller.set_initial_options()
         self.stackedWidget.setCurrentIndex(2)
         self.button_save_config.clicked.connect(self.save_options)
+        self.devices_controller.device_added.connect(self.set_device_on_view)
+        self.devices_controller.device_removed.connect(
+            self.remove_device_from_view
+        )
+        self.devices_controller.show_popup_signal.connect(self.show_popup)
+        self.button_change_to_wifi.clicked.connect(
+            lambda: self.devices_controller.change_devices_connection_to_wifi(
+                self.textedit_usb_devices.toPlainText()
+            )
+        )
+        self.button_connect_emulators.clicked.connect(
+            lambda: self.devices_controller.connect_devices_with_ip_address(
+                self.textedit_connect_emulators.toPlainText()
+            )
+        )
+        self.devices_controller.watch_devices()
+        self.frame_4.hide()
+        self.frame_5.hide()   # temporário
 
     def set_options_at_view(self, options: dict) -> None:
         self.set_time_between_actions_min_value(
@@ -74,9 +92,9 @@ class MainView(IGBotGUI, QMainWindow):
             OptionsKeys.REST_GOAL_TIME: self.get_rest_goal_time_value(),
         }
 
-    def show_popup(self, message: str, text: str) -> None:
+    def show_popup(self, title: str, text: str) -> None:
         msg = QMessageBox()
-        msg.setWindowTitle(message)
+        msg.setWindowTitle(title)
         msg.setText(text)
         msg.setIcon(QMessageBox.Information)
         msg.exec_()
@@ -156,9 +174,26 @@ class MainView(IGBotGUI, QMainWindow):
     def get_rest_goal_time_value(self) -> int:
         return self.spinbox_minutes_rest.value()
 
+    def set_device_on_view(self, device_info: dict) -> None:
+        self.create_device_frame(device_info)
+        if device_info['connection_type'] == 'usb':
+            self.textedit_usb_devices.appendPlainText(
+                device_info['device_id'] + '\n'
+            )
+
+    def remove_device_from_view(self, device_info: dict) -> None:
+        self.delete_device_frame(device_info['index'])
+        if device_info['device_id'] in self.textedit_usb_devices.toPlainText():
+            usb_devices = self.textedit_usb_devices.toPlainText()
+            new_usb_devices = usb_devices.replace(
+                device_info['device_id'] + '\n', ''
+            )
+            self.textedit_usb_devices.setPlainText(new_usb_devices)
+
     def create_device_frame(self, device_info: dict) -> None:
 
         device_index = device_info['index']
+        device_id = device_info['device_id']
 
         main_frame = self._create_device_main_frame(device_index)
         horizontal_layout = self._create_device_horizontal_layout(
@@ -208,7 +243,7 @@ class MainView(IGBotGUI, QMainWindow):
         button_device_actions = self._create_button_device_actions(
             frame_device_actions, device_index
         )
-        self._set_button_device_actions_menu(button_device_actions)
+        self._set_button_device_actions_menu(button_device_actions, device_id)
 
         vertical_layout_3.addWidget(
             button_device_actions, 0, QtCore.Qt.AlignHCenter
@@ -351,11 +386,14 @@ class MainView(IGBotGUI, QMainWindow):
         return button_device_actions
 
     def _set_button_device_actions_menu(
-        self, button_device_actions: QtWidgets.QPushButton
+        self, button_device_actions: QtWidgets.QPushButton, device_id: int
     ) -> None:
         menu = QtWidgets.QMenu()
         menu.addAction('Ver informações')
-        menu.addAction('Desconectar dispositivo')
+        menu.addAction(
+            'Desconectar dispositivo',
+            lambda: self.devices_controller.disconnect_device(device_id),
+        )
         button_device_actions.setMenu(menu)
 
     def _get_connection_stylesheet(self, connection: str) -> str:
@@ -371,10 +409,7 @@ class MainView(IGBotGUI, QMainWindow):
             else usb_connection_stylesheet
         )
 
-    def delete_device_frame(self, device_id: str) -> None:
-        device_info = self.devices_controller.get_device_info(device_id)
-        device_index = device_info['index']
-
+    def delete_device_frame(self, device_index: int) -> None:
         frame_device = self.findChild(
             QtWidgets.QFrame, 'frame_device_' + str(device_index)
         )
