@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from PyQt5.QtCore import QObject, pyqtSignal
 
 
@@ -20,7 +22,7 @@ class ConfigModel(QObject):
         self._rest_goal_actions = 0
         self._rest_goal_time = 0
 
-    def get_config(self):
+    def get_config(self) -> Dict[str, Any]:
         return {
             'time_between_actions_min': self.time_between_actions_min,
             'time_between_actions_max': self.time_between_actions_max,
