@@ -8,7 +8,6 @@ class IGInteractor: responsável por ações de seguir e curtir no instagram. De
 class IGFacade: padrão facade para coordenar as ações de autenticação e interação no Instagram. Instancia IGAuth e IGInteractor e as utiliza para realizar as ações.
 
 class WeezuAPI: responsável por retornar as ações de seguir/curtir de acordo com o usuário fornecido.
-class ConfigHandler: responsável por ler e gerenciar o arquivo de configuração.
 
 
 Exemplo do uso de arquitetura MVC com QtDesigner para uma tela de configurações:
@@ -30,8 +29,11 @@ import sys
 from PyQt5.QtWidgets import QApplication
 
 from src.gui.controllers.config_controller import ConfigController
+from src.gui.controllers.devices_controller import DevicesController
 from src.gui.models.config_model import ConfigModel
+from src.gui.models.devices_model import DevicesModel
 from src.gui.repository.config_repository import ConfigRepository
+from src.gui.services.adb_service import ADBService
 from src.gui.views.main_view import MainView
 
 if __name__ == '__main__':
@@ -39,6 +41,9 @@ if __name__ == '__main__':
     config_model = ConfigModel()
     config_repository = ConfigRepository()
     config_controller = ConfigController(config_model, config_repository)
-    main_view = MainView(config_model, config_controller)
+    devices_model = DevicesModel()
+    adb_service = ADBService('userdata\\platform-tools\\adb.exe')
+    devices_controller = DevicesController(devices_model, adb_service)
+    main_view = MainView(config_controller, devices_controller)
     main_view.show()
     sys.exit(app.exec_())
