@@ -1,9 +1,10 @@
 import os
+from typing import Literal
 
 
 class ADBService:
     def __init__(self, adb_executable_path: str) -> None:
-        self._adb_executable_path = ''
+        self._adb_executable_path = None
         self.adb_executable_path = adb_executable_path
 
     @property
@@ -50,21 +51,6 @@ class ADBService:
         data = {'model': model, 'android_version': android_version}
         return data
 
-    def get_only_usb_devices(self) -> list:
-        """
-        Método responsável por retornar a lista de dispositivos USB conectados.
-        Dispositivos conectados via Wi-Fi não são retornados.
-
-        Returns:
-            list: Lista de dispositivos USB conectados.
-        """
-        devices_id = self.get_id_from_connected_devices()
-        usb_devices = []
-        for device_id in devices_id:
-            if 'emulator' not in device_id and '.' not in device_id:
-                usb_devices.append(device_id)
-        return usb_devices
-
     def connect_device_with_ip_address(self, device_ip: str) -> bool:
         """
         Método responsável por conectar um dispositivo via Wi-Fi.
@@ -82,7 +68,7 @@ class ADBService:
         else:
             return False
 
-    def disconnect_emulator(self, device_ip: str) -> bool:
+    def disconnect_device(self, device_id: str) -> bool:
         """
         Método responsável por desconectar um dispositivo via Wi-Fi.
 
@@ -92,7 +78,7 @@ class ADBService:
         Returns:
             bool: True se desconectar, False se não desconectar.
         """
-        cmd = f'{self.adb_executable_path} disconnect {device_ip}'
+        cmd = f'{self.adb_executable_path} disconnect {device_id}'
         result = os.popen(cmd).readlines()
         if 'disconnected' in result[0]:
             return True
@@ -142,11 +128,12 @@ class ADBService:
         Returns:
             bool: True se conectar, False se não conectar.
         """
-        if not self.restart_adb_to_tcp_mode():
+        device_ip = self.get_usb_device_ip_address(device_id)
+
+        if device_ip is None:
             return False
 
-        device_ip = self.get_usb_device_ip_address(device_id)
-        if device_ip is None:
+        if not self.restart_adb_to_tcp_mode():
             return False
 
         return self.connect_device_with_ip_address(device_ip)
@@ -190,3 +177,10 @@ class ADBService:
             return True
         else:
             return False
+
+    @staticmethod
+    def get_device_connection_type(device_id: str) -> Literal['usb', 'wifi']:
+        if 'emulator' not in device_id and '.' not in device_id:
+            return 'usb'
+        else:
+            return 'wifi'
