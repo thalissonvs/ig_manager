@@ -4,17 +4,19 @@ from PyQt5.QtCore import QObject, pyqtSignal
 class DeviceModel(QObject):
     def __init__(self) -> None:
         super().__init__()
-        self._device_id = ''
-        self._model = ''
-        self._android_version = ''
-        self._connection_type = ''
+        self._device_id = None
+        self._model = None
+        self._android_version = None
+        self._connection_type = None
+        self._index = None
 
     def get_device_info(self) -> dict:
         return {
             'device_id': self.device_id,
             'model': self.model,
             'android_version': self.android_version,
-            'connection_type': self.connection_type
+            'connection_type': self.connection_type,
+            'index': self.index,
         }
 
     @property
@@ -40,56 +42,57 @@ class DeviceModel(QObject):
     @android_version.setter
     def android_version(self, value: str) -> None:
         self._android_version = value
-    
+
     @property
     def connection_type(self) -> str:
         return self._connection_type
-    
+
     @connection_type.setter
     def connection_type(self, value: str) -> None:
         self._connection_type = value
+
+    @property
+    def index(self) -> int:
+        return self._index
+
+    @index.setter
+    def index(self, value: int) -> None:
+        self._index = value
 
 
 class DevicesModel(QObject):
 
     device_added = pyqtSignal(dict)
-    device_removed = pyqtSignal(str)
+    device_removed = pyqtSignal(dict)
 
     def __init__(self) -> None:
         super().__init__()
         self._devices: dict[str, DeviceModel] = {}
 
     def add_device(
-        self, device_id: str, model: str, android_version: str
+        self,
+        device_id: str,
+        model: str,
+        android_version: str,
+        connection_type: str,
     ) -> None:
         device = DeviceModel()
         device.device_id = device_id
         device.model = model
         device.android_version = android_version
+        device.connection_type = connection_type
+        device_index = len(self._devices)
+        device.index = device_index
         self._devices[device_id] = device
         self.device_added.emit(device.get_device_info())
 
     def remove_device(self, device_id: str) -> None:
+        device_info = self._devices[device_id].get_device_info()
         del self._devices[device_id]
-        self.device_removed.emit(device_id)
+        self.device_removed.emit(device_info)
 
     def get_devices(self) -> dict:
         devices = {}
         for device_id, device in self._devices.items():
             devices[device_id] = device.get_device_info()
         return devices
-
-    def get_device(self, device_id: str) -> dict:
-        device_index = list(self._devices.keys()).index(device_id)
-        device_info = self._devices[device_id].get_device_info()
-        device_info['index'] = device_index
-        return device_info
-
-    def get_device_model(self, device_id: str) -> str:
-        return self._devices[device_id].model
-
-    def get_device_android_version(self, device_id: str) -> str:
-        return self._devices[device_id].android_version
-
-    def get_device_id(self, device_id: str) -> str:
-        return self._devices[device_id].device_id
