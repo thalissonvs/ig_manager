@@ -4,8 +4,9 @@ from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from src.gui.constants import OptionsKeys
 from src.gui.controllers.config_controller import ConfigController
 from src.gui.controllers.devices_controller import DevicesController
-from src.gui.models.config_model import ConfigModel
+from src.gui.controllers.profiles_controller import ProfilesController
 from src.gui.resources.main_view_rc import IGBotGUI
+from src.gui.views.add_profiles_view import AddProfilesView
 
 
 class MainView(IGBotGUI, QMainWindow):
@@ -13,21 +14,29 @@ class MainView(IGBotGUI, QMainWindow):
         self,
         config_controller: ConfigController,
         devices_controller: DevicesController,
+        profiles_controller: ProfilesController,
+        add_profiles_view: AddProfilesView,
         parent=None,
     ) -> None:
         super().__init__(parent)
         self.setupUi(self)
         self.config_controller = config_controller
         self.devices_controller = devices_controller
+        self.profiles_controller = profiles_controller
+        self.add_profiles_view = add_profiles_view
         self.config_controller.config_changed.connect(self.set_options_at_view)
         self.config_controller.set_initial_options()
-        self.stackedWidget.setCurrentIndex(2)
         self.button_save_config.clicked.connect(self.save_options)
         self.devices_controller.device_added.connect(self.set_device_on_view)
         self.devices_controller.device_removed.connect(
             self.remove_device_from_view
         )
         self.devices_controller.show_popup_signal.connect(self.show_popup)
+        
+        self.profiles_controller.profile_added.connect(
+            self.create_profile_frame
+        )
+        
         self.button_change_to_wifi.clicked.connect(
             lambda: self.devices_controller.change_devices_connection_to_wifi(
                 self.textedit_usb_devices.toPlainText()
@@ -38,9 +47,24 @@ class MainView(IGBotGUI, QMainWindow):
                 self.textedit_connect_emulators.toPlainText()
             )
         )
+        self.button_add_profiles.clicked.connect(self.add_profiles_view.show)
+
         self.devices_controller.watch_devices()
+        self.set_page_events()
         self.frame_4.hide()
         self.frame_5.hide()   # temporário
+        self.frame_33.hide()
+
+    def set_page_events(self) -> None:
+        self.page_devices.clicked.connect(
+            lambda: self.stackedWidget.setCurrentIndex(2)
+        )
+        self.page_start.clicked.connect(
+            lambda: self.stackedWidget.setCurrentIndex(1)
+        )
+        self.page_options.clicked.connect(
+            lambda: self.stackedWidget.setCurrentIndex(0)
+        )
 
     def set_options_at_view(self, options: dict) -> None:
         self.set_time_between_actions_min_value(
@@ -175,22 +199,53 @@ class MainView(IGBotGUI, QMainWindow):
         return self.spinbox_minutes_rest.value()
 
     def set_device_on_view(self, device_info: dict) -> None:
-        self.create_device_frame(device_info)
+        self._create_device_frame(device_info)
+
         if device_info['connection_type'] == 'usb':
             self.textedit_usb_devices.appendPlainText(
                 device_info['device_id'] + '\n'
             )
 
+        if self._should_remove_no_devices_connected():
+            self.combobox_connected_devices.removeItem(0)
+
+        self.combobox_connected_devices.addItem(
+            f"[ID] {device_info['device_id']} - [MODEL] {device_info['model']}"
+        )
+
     def remove_device_from_view(self, device_info: dict) -> None:
-        self.delete_device_frame(device_info['index'])
+        self._delete_device_frame(device_info['index'])
         if device_info['device_id'] in self.textedit_usb_devices.toPlainText():
             usb_devices = self.textedit_usb_devices.toPlainText()
             new_usb_devices = usb_devices.replace(
                 device_info['device_id'] + '\n', ''
             )
             self.textedit_usb_devices.setPlainText(new_usb_devices)
+        self.combobox_connected_devices.removeItem(
+            self.combobox_connected_devices.findText(
+                f"[ID] {device_info['device_id']} - [MODEL] {device_info['model']}"
+            )
+        )
+        if self._should_add_no_devices_connected():
+            self.combobox_connected_devices.addItem(
+                'Nenhum dispositivo conectado'
+            )
 
-    def create_device_frame(self, device_info: dict) -> None:
+    def _should_remove_no_devices_connected(self) -> bool:
+        combobox_devices_items = self._get_combobox_devices_items()
+        return 'Nenhum dispositivo conectado' in combobox_devices_items
+
+    def _should_add_no_devices_connected(self) -> bool:
+        combobox_devices_items = self._get_combobox_devices_items()
+        return len(combobox_devices_items) == 0
+
+    def _get_combobox_devices_items(self) -> list:
+        return [
+            self.combobox_connected_devices.itemText(i)
+            for i in range(self.combobox_connected_devices.count())
+        ]
+
+    def _create_device_frame(self, device_info: dict) -> None:
 
         device_index = device_info['index']
         device_id = device_info['device_id']
@@ -409,9 +464,109 @@ class MainView(IGBotGUI, QMainWindow):
             else usb_connection_stylesheet
         )
 
-    def delete_device_frame(self, device_index: int) -> None:
+    def _delete_device_frame(self, device_index: int) -> None:
         frame_device = self.findChild(
             QtWidgets.QFrame, 'frame_device_' + str(device_index)
         )
         frame_device.setParent(None)
         frame_device.deleteLater()
+
+    def create_profile_frame(self, profile_info: dict) -> None:
+
+        username = profile_info['username']
+
+        main_frame = QtWidgets.QFrame(self.frame_32)
+        main_frame.setMinimumSize(QtCore.QSize(0, 40))
+        main_frame.setStyleSheet('')
+        main_frame.setFrameShape(QtWidgets.QFrame.NoFrame)
+        main_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        main_frame.setObjectName('frame_profile_' + username)
+
+        horizontal_layout = QtWidgets.QHBoxLayout(main_frame)
+        horizontal_layout.setContentsMargins(0, 0, 0, 0)
+        horizontal_layout.setSpacing(0)
+        horizontal_layout.setObjectName('horizontalLayout_' + username)
+
+        frame_profile_username = QtWidgets.QFrame(main_frame)
+        frame_profile_username.setMaximumSize(QtCore.QSize(150, 16777215))
+        frame_profile_username.setStyleSheet('')
+        frame_profile_username.setFrameShape(QtWidgets.QFrame.NoFrame)
+        frame_profile_username.setFrameShadow(QtWidgets.QFrame.Raised)
+        frame_profile_username.setObjectName(
+            'frame_profile_username_' + username
+        )
+
+        vertical_layout = QtWidgets.QVBoxLayout(frame_profile_username)
+        vertical_layout.setObjectName('verticalLayout_' + username)
+
+        label_profile_username = QtWidgets.QLabel(frame_profile_username)
+        label_profile_username.setStyleSheet(
+            'font: 8pt "Yu Gothic UI Semilight";\n'
+            'color: rgb(230, 230, 230);\n'
+            'font-weight:bold;'
+        )
+        label_profile_username.setAlignment(QtCore.Qt.AlignCenter)
+        label_profile_username.setObjectName(
+            'label_profile_username_' + username
+        )
+
+        label_profile_username.setText('@' + username)
+        vertical_layout.addWidget(label_profile_username)
+        horizontal_layout.addWidget(frame_profile_username)
+
+        frame_profile_log = QtWidgets.QFrame(main_frame)
+        frame_profile_log.setMinimumSize(QtCore.QSize(236, 0))
+        frame_profile_log.setMaximumSize(QtCore.QSize(236, 16777215))
+        frame_profile_log.setStyleSheet('')
+        frame_profile_log.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        frame_profile_log.setFrameShadow(QtWidgets.QFrame.Raised)
+        frame_profile_log.setObjectName('frame_profile_log_' + username)
+
+        vertical_layout_2 = QtWidgets.QVBoxLayout(frame_profile_log)
+        vertical_layout_2.setObjectName('verticalLayout2_' + username)
+
+        label_profile_log = QtWidgets.QLabel(frame_profile_log)
+        label_profile_log.setStyleSheet(
+            'font: 8pt "Yu Gothic UI Semilight";\n'
+            'color: rgb(230, 230, 230);\n'
+            'font-weight: bold;'
+        )
+        label_profile_log.setAlignment(QtCore.Qt.AlignCenter)
+        label_profile_log.setObjectName('label_profile_log_' + username)
+
+        label_profile_log.setText(profile_info['current_log'])
+        vertical_layout_2.addWidget(label_profile_log)
+        horizontal_layout.addWidget(frame_profile_log)
+
+        frame_profile_actions = QtWidgets.QFrame(main_frame)
+        frame_profile_actions.setStyleSheet('border: 0px;')
+        frame_profile_actions.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        frame_profile_actions.setFrameShadow(QtWidgets.QFrame.Raised)
+        frame_profile_actions.setObjectName(
+            'frame_profile_actions_' + username
+        )
+
+        vertical_layout_3 = QtWidgets.QVBoxLayout(frame_profile_actions)
+        vertical_layout_3.setContentsMargins(0, 0, 0, 0)
+        vertical_layout_3.setSpacing(0)
+        vertical_layout_3.setObjectName('verticalLayout3_' + username)
+
+        button_profile_actions = QtWidgets.QPushButton(frame_profile_actions)
+        button_profile_actions.setMinimumSize(QtCore.QSize(18, 18))
+        button_profile_actions.setMaximumSize(QtCore.QSize(18, 16777215))
+        button_profile_actions.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
+        button_profile_actions.setStyleSheet(
+            'background-image: url(:/imagens/imagens/more_resized.png);'
+        )
+        button_profile_actions.setText('')
+        button_profile_actions.setObjectName(
+            'button_profile_actions_' + username
+        )
+
+        vertical_layout_3.addWidget(button_profile_actions)
+        horizontal_layout.addWidget(
+            frame_profile_actions, 0, QtCore.Qt.AlignHCenter
+        )
+        self.verticalLayout_26.addWidget(main_frame)
