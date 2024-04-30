@@ -32,11 +32,11 @@ class MainView(IGBotGUI, QMainWindow):
             self.remove_device_from_view
         )
         self.devices_controller.show_popup_signal.connect(self.show_popup)
-        
+
         self.profiles_controller.profile_added.connect(
             self.create_profile_frame
         )
-        
+
         self.button_change_to_wifi.clicked.connect(
             lambda: self.devices_controller.change_devices_connection_to_wifi(
                 self.textedit_usb_devices.toPlainText()

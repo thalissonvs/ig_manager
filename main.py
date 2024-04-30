@@ -30,15 +30,15 @@ from PyQt5.QtWidgets import QApplication
 
 from src.gui.controllers.config_controller import ConfigController
 from src.gui.controllers.devices_controller import DevicesController
+from src.gui.controllers.profiles_controller import ProfilesController
 from src.gui.models.config_model import ConfigModel
 from src.gui.models.devices_model import DevicesModel
+from src.gui.models.profiles_model import ProfilesModel
 from src.gui.repository.config_repository import ConfigRepository
 from src.gui.services.adb_service import ADBService
+from src.gui.services.profiles_service import ProfilesService
 from src.gui.views.add_profiles_view import AddProfilesView
 from src.gui.views.main_view import MainView
-from src.gui.models.profiles_model import ProfilesModel
-from src.gui.controllers.profiles_controller import ProfilesController
-from src.gui.services.profiles_service import ProfilesService
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -52,7 +52,10 @@ if __name__ == '__main__':
     profiles_controller = ProfilesController(profiles_model, ProfilesService())
     add_profiles_view = AddProfilesView(profiles_controller)
     main_view = MainView(
-        config_controller, devices_controller, profiles_controller, add_profiles_view
+        config_controller,
+        devices_controller,
+        profiles_controller,
+        add_profiles_view,
     )
     main_view.show()
     status = sys.exit(app.exec_())
