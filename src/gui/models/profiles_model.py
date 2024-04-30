@@ -104,16 +104,21 @@ class ProfilesModel(QObject):
         username: str,
         password: str,
         gender: str,
+        like_actions_done: int = 0,
+        follow_actions_done: int = 0,
+        comment_actions_done: int = 0,
+        status: str = 'active',
+        current_log: str = 'Aguardando início...',
     ) -> None:
         profile = ProfileModel()
         profile.username = username
         profile.password = password
         profile.gender = gender
-        profile.like_actions_done = 0
-        profile.follow_actions_done = 0
-        profile.comment_actions_done = 0
-        profile.status = 'active'
-        profile.current_log = 'Aguardando início...'
+        profile.like_actions_done = like_actions_done
+        profile.follow_actions_done = follow_actions_done
+        profile.comment_actions_done = comment_actions_done
+        profile.status = status
+        profile.current_log = current_log
         self._devices[username] = profile
         self.profile_added.emit(profile.get_profile_info())
 
@@ -126,3 +131,6 @@ class ProfilesModel(QObject):
         for username, profile in self._devices.items():
             profiles[username] = profile.get_profile_info()
         return profiles
+    
+    def get_profile(self, username: str) -> ProfileModel:
+        return self._devices[username].get_profile_info()
