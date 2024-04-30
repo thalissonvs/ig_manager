@@ -5,6 +5,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 from src.gui.models.profiles_model import ProfilesModel
 from src.gui.services.profiles_service import ProfilesService
+from src.gui.repository.profiles_repository import ProfilesRepository
 
 
 class ProfilesController(QObject):
@@ -14,11 +15,12 @@ class ProfilesController(QObject):
     show_popup_signal = pyqtSignal(str, str)
 
     def __init__(
-        self, profiles_model: ProfilesModel, profiles_service: ProfilesService
+        self, profiles_model: ProfilesModel, profiles_service: ProfilesService, profiles_repository: ProfilesRepository
     ) -> None:
         super().__init__()
         self._profiles_model = profiles_model
         self._profiles_service = profiles_service
+        self._profiles_repository = profiles_repository
         self._profiles_model.profile_added.connect(self._emit_profile_added)
         self._profiles_model.profile_removed.connect(
             self._emit_profile_removed
@@ -37,8 +39,16 @@ class ProfilesController(QObject):
         gender: str,
     ) -> None:
         self._profiles_model.add_profile(username, password, gender)
+        self._profiles_repository.add_new_profile(
+            self._profiles_model.get_profile(username)
+        )
 
     def add_multiple_profiles(self, profiles_text: str) -> None:
         profiles = self._profiles_service.format_profiles_text(profiles_text)
         for profile in profiles:
             self.add_single_profile(**profile)
+    
+    def add_initial_profiles(self) -> None:
+        profiles = self._profiles_repository.get_profiles()
+        for profile in profiles.values():
+            self._profiles_model.add_profile(**profile)
