@@ -49,6 +49,7 @@ class MainView(IGBotGUI, QMainWindow):
         )
         self.button_add_profiles.clicked.connect(self.add_profiles_view.show)
 
+        self.profiles_controller.add_initial_profiles()
         self.devices_controller.watch_devices()
         self.set_page_events()
         self.frame_4.hide()
