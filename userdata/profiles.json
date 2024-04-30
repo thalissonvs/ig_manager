@@ -1,0 +1,32 @@
+{
+    "willenrocha": {
+        "username": "willenrocha",
+        "password": "123455",
+        "gender": "M",
+        "like_actions_done": 0,
+        "follow_actions_done": 0,
+        "comment_actions_done": 0,
+        "status": "active",
+        "current_log": "Aguardando in\u00edcio..."
+    },
+    "willen2": {
+        "username": "willen2",
+        "password": "12343455",
+        "gender": "M",
+        "like_actions_done": 0,
+        "follow_actions_done": 0,
+        "comment_actions_done": 0,
+        "status": "active",
+        "current_log": "Aguardando in\u00edcio..."
+    },
+    "willen23": {
+        "username": "willen23",
+        "password": "asdfq314",
+        "gender": "M",
+        "like_actions_done": 0,
+        "follow_actions_done": 0,
+        "comment_actions_done": 0,
+        "status": "active",
+        "current_log": "Aguardando in\u00edcio..."
+    }
+}
