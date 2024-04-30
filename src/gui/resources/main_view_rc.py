@@ -10,8 +10,6 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from src.gui.resources import imagens_rc
-
 
 class IGBotGUI(object):
     def setupUi(self, kwai_bot):
@@ -159,6 +157,15 @@ class IGBotGUI(object):
         )
         self.page_options.setObjectName('page_options')
         self.verticalLayout_4.addWidget(self.page_options)
+        self.frame_30 = QtWidgets.QFrame(self.lateral_menu)
+        self.frame_30.setGeometry(QtCore.QRect(0, 137, 151, 41))
+        self.frame_30.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_30.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_30.setObjectName('frame_30')
+        self.verticalLayout_24 = QtWidgets.QVBoxLayout(self.frame_30)
+        self.verticalLayout_24.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_24.setSpacing(0)
+        self.verticalLayout_24.setObjectName('verticalLayout_24')
         self.horizontalLayout.addWidget(self.lateral_menu)
         self.stackedWidget = QtWidgets.QStackedWidget(self.main_frame)
         self.stackedWidget.setObjectName('stackedWidget')
@@ -848,7 +855,7 @@ class IGBotGUI(object):
         self.frame_28.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_28.setObjectName('frame_28')
         self.label_25 = QtWidgets.QLabel(self.frame_28)
-        self.label_25.setGeometry(QtCore.QRect(100, 40, 401, 20))
+        self.label_25.setGeometry(QtCore.QRect(100, 9, 401, 31))
         self.label_25.setStyleSheet(
             'font: 14pt "Yu Gothic UI Semilight";\n'
             'color: rgb(230, 230, 230);\n'
@@ -858,7 +865,7 @@ class IGBotGUI(object):
         self.label_25.setObjectName('label_25')
         self.combobox_connected_devices = QtWidgets.QComboBox(self.frame_28)
         self.combobox_connected_devices.setGeometry(
-            QtCore.QRect(150, 80, 300, 30)
+            QtCore.QRect(150, 50, 300, 30)
         )
         self.combobox_connected_devices.setMinimumSize(QtCore.QSize(300, 30))
         self.combobox_connected_devices.setStyleSheet(
@@ -891,66 +898,194 @@ class IGBotGUI(object):
             'combobox_connected_devices'
         )
         self.combobox_connected_devices.addItem('')
-        self.label_26 = QtWidgets.QLabel(self.frame_28)
-        self.label_26.setGeometry(QtCore.QRect(100, 150, 401, 20))
-        self.label_26.setStyleSheet(
-            'font: 14pt "Yu Gothic UI Semilight";\n'
-            'color: rgb(230, 230, 230);\n'
-            'font-weight:bold;'
+        self.frame_added_accounts = QtWidgets.QFrame(self.frame_28)
+        self.frame_added_accounts.setGeometry(QtCore.QRect(30, 100, 541, 300))
+        self.frame_added_accounts.setMinimumSize(QtCore.QSize(541, 300))
+        self.frame_added_accounts.setStyleSheet('')
+        self.frame_added_accounts.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame_added_accounts.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_added_accounts.setObjectName('frame_added_accounts')
+        self.verticalLayout_23 = QtWidgets.QVBoxLayout(
+            self.frame_added_accounts
         )
-        self.label_26.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_26.setObjectName('label_26')
-        self.frame_29 = QtWidgets.QFrame(self.frame_28)
-        self.frame_29.setGeometry(QtCore.QRect(150, 190, 301, 151))
-        self.frame_29.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.frame_29.setStyleSheet('border: 1px solid rgb(70, 70, 82);')
-        self.frame_29.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_29.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_29.setObjectName('frame_29')
-        self.verticalLayout_23 = QtWidgets.QVBoxLayout(self.frame_29)
         self.verticalLayout_23.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_23.setSpacing(0)
         self.verticalLayout_23.setObjectName('verticalLayout_23')
-        self.textedit_accounts = QtWidgets.QTextEdit(self.frame_29)
-        self.textedit_accounts.setStyleSheet(
-            'border: 0px;\n'
-            'padding: 10px;\n'
-            'font: 12px "Yu Gothic UI Semilight";\n'
-            'color: rgb(230, 230, 230);'
+        self.frame_31 = QtWidgets.QFrame(self.frame_added_accounts)
+        self.frame_31.setMinimumSize(QtCore.QSize(0, 30))
+        self.frame_31.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.frame_31.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_31.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_31.setObjectName('frame_31')
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout(self.frame_31)
+        self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_12.setSpacing(0)
+        self.horizontalLayout_12.setObjectName('horizontalLayout_12')
+        self.label_26 = QtWidgets.QLabel(self.frame_31)
+        self.label_26.setMinimumSize(QtCore.QSize(150, 0))
+        self.label_26.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.label_26.setStyleSheet(
+            'background-color: rgb(39, 39, 47);\n'
+            'border-right: 1px solid rgb(70, 70, 82);\n'
+            'color: rgb(255, 255, 255);\n'
+            'font-weight: bold;\n'
+            'border-top-left-radius:5px;'
         )
-        self.textedit_accounts.setObjectName('textedit_accounts')
-        self.verticalLayout_23.addWidget(self.textedit_accounts)
-        self.button_start = QtWidgets.QPushButton(self.frame_28)
-        self.button_start.setGeometry(QtCore.QRect(240, 360, 131, 31))
+        self.label_26.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_26.setObjectName('label_26')
+        self.horizontalLayout_12.addWidget(self.label_26)
+        self.label_27 = QtWidgets.QLabel(self.frame_31)
+        self.label_27.setMinimumSize(QtCore.QSize(236, 0))
+        self.label_27.setMaximumSize(QtCore.QSize(236, 16777215))
+        self.label_27.setStyleSheet(
+            'background-color: rgb(39, 39, 47);\n'
+            'border-right: 1px solid rgb(70, 70, 82);\n'
+            'color: rgb(255, 255, 255);\n'
+            'font-weight: bold;'
+        )
+        self.label_27.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_27.setObjectName('label_27')
+        self.horizontalLayout_12.addWidget(self.label_27)
+        self.label_28 = QtWidgets.QLabel(self.frame_31)
+        self.label_28.setMinimumSize(QtCore.QSize(0, 0))
+        self.label_28.setMaximumSize(QtCore.QSize(173, 16777215))
+        self.label_28.setStyleSheet(
+            'background-color: rgb(39, 39, 47);\n'
+            'color: rgb(255, 255, 255);\n'
+            'font-weight: bold;\n'
+            'border-top-right-radius:5px;'
+        )
+        self.label_28.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_28.setObjectName('label_28')
+        self.horizontalLayout_12.addWidget(self.label_28)
+        self.verticalLayout_23.addWidget(self.frame_31)
+        self.scrollArea_2 = QtWidgets.QScrollArea(self.frame_added_accounts)
+        self.scrollArea_2.setMinimumSize(QtCore.QSize(0, 220))
+        self.scrollArea_2.setStyleSheet('border: 0px;')
+        self.scrollArea_2.setWidgetResizable(True)
+        self.scrollArea_2.setObjectName('scrollArea_2')
+        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_2.setGeometry(
+            QtCore.QRect(0, 0, 541, 270)
+        )
+        self.scrollAreaWidgetContents_2.setObjectName(
+            'scrollAreaWidgetContents_2'
+        )
+        self.verticalLayout_25 = QtWidgets.QVBoxLayout(
+            self.scrollAreaWidgetContents_2
+        )
+        self.verticalLayout_25.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_25.setSpacing(0)
+        self.verticalLayout_25.setObjectName('verticalLayout_25')
+        self.frame_32 = QtWidgets.QFrame(self.scrollAreaWidgetContents_2)
+        self.frame_32.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame_32.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_32.setObjectName('frame_32')
+        self.verticalLayout_26 = QtWidgets.QVBoxLayout(self.frame_32)
+        self.verticalLayout_26.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_26.setSpacing(0)
+        self.verticalLayout_26.setObjectName('verticalLayout_26')
+        self.frame_33 = QtWidgets.QFrame(self.frame_32)
+        self.frame_33.setMinimumSize(QtCore.QSize(0, 40))
+        self.frame_33.setStyleSheet('')
+        self.frame_33.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame_33.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_33.setObjectName('frame_33')
+        self.horizontalLayout_16 = QtWidgets.QHBoxLayout(self.frame_33)
+        self.horizontalLayout_16.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_16.setSpacing(0)
+        self.horizontalLayout_16.setObjectName('horizontalLayout_16')
+        self.frame_34 = QtWidgets.QFrame(self.frame_33)
+        self.frame_34.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.frame_34.setStyleSheet('')
+        self.frame_34.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame_34.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_34.setObjectName('frame_34')
+        self.verticalLayout_27 = QtWidgets.QVBoxLayout(self.frame_34)
+        self.verticalLayout_27.setObjectName('verticalLayout_27')
+        self.label_29 = QtWidgets.QLabel(self.frame_34)
+        self.label_29.setStyleSheet(
+            'font: 8pt "Yu Gothic UI Semilight";\n'
+            'color: rgb(230, 230, 230);\n'
+            'font-weight:bold;'
+        )
+        self.label_29.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_29.setObjectName('label_29')
+        self.verticalLayout_27.addWidget(self.label_29)
+        self.horizontalLayout_16.addWidget(self.frame_34)
+        self.frame_35 = QtWidgets.QFrame(self.frame_33)
+        self.frame_35.setMinimumSize(QtCore.QSize(236, 0))
+        self.frame_35.setMaximumSize(QtCore.QSize(236, 16777215))
+        self.frame_35.setStyleSheet('')
+        self.frame_35.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_35.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_35.setObjectName('frame_35')
+        self.verticalLayout_32 = QtWidgets.QVBoxLayout(self.frame_35)
+        self.verticalLayout_32.setObjectName('verticalLayout_32')
+        self.label_31 = QtWidgets.QLabel(self.frame_35)
+        self.label_31.setStyleSheet(
+            'font: 8pt "Yu Gothic UI Semilight";\n'
+            'color: rgb(230, 230, 230);\n'
+            'font-weight:bold;'
+        )
+        self.label_31.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_31.setObjectName('label_31')
+        self.verticalLayout_32.addWidget(self.label_31)
+        self.horizontalLayout_16.addWidget(self.frame_35)
+        self.frame_37 = QtWidgets.QFrame(self.frame_33)
+        self.frame_37.setStyleSheet('border: 0px;')
+        self.frame_37.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_37.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_37.setObjectName('frame_37')
+        self.verticalLayout_29 = QtWidgets.QVBoxLayout(self.frame_37)
+        self.verticalLayout_29.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_29.setSpacing(0)
+        self.verticalLayout_29.setObjectName('verticalLayout_29')
+        self.pushButton_8 = QtWidgets.QPushButton(self.frame_37)
+        self.pushButton_8.setMinimumSize(QtCore.QSize(18, 18))
+        self.pushButton_8.setMaximumSize(QtCore.QSize(18, 16777215))
+        self.pushButton_8.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
+        self.pushButton_8.setStyleSheet(
+            'background-image: url(:/imagens/imagens/more_resized.png);'
+        )
+        self.pushButton_8.setText('')
+        self.pushButton_8.setObjectName('pushButton_8')
+        self.verticalLayout_29.addWidget(self.pushButton_8)
+        self.horizontalLayout_16.addWidget(
+            self.frame_37, 0, QtCore.Qt.AlignHCenter
+        )
+        self.verticalLayout_26.addWidget(self.frame_33)
+        self.verticalLayout_25.addWidget(self.frame_32, 0, QtCore.Qt.AlignTop)
+        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_23.addWidget(self.scrollArea_2)
+        self.button_start_all = QtWidgets.QPushButton(self.frame_28)
+        self.button_start_all.setGeometry(QtCore.QRect(70, 400, 150, 35))
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.button_start.sizePolicy().hasHeightForWidth()
+            self.button_start_all.sizePolicy().hasHeightForWidth()
         )
-        self.button_start.setSizePolicy(sizePolicy)
-        self.button_start.setMinimumSize(QtCore.QSize(120, 25))
-        self.button_start.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.button_start.setCursor(
+        self.button_start_all.setSizePolicy(sizePolicy)
+        self.button_start_all.setMinimumSize(QtCore.QSize(150, 35))
+        self.button_start_all.setCursor(
             QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         )
-        self.button_start.setStyleSheet(
+        self.button_start_all.setStyleSheet(
             'QPushButton{\n'
-            'background-color: rgb(39, 39, 47);\n'
-            '    background-image: url(:/imagens/imagens/play-button-arrowhead-resized.png);\n'
-            'background-position: left;\n'
-            'background-repeat: none;\n'
+            'border: 1px solid rgb(70, 70, 82);\n'
             'border-radius: 5px;\n'
             'background-origin: content;\n'
-            'padding-left: 25px;\n'
+            'padding-left: 8px;\n'
             'padding-right: 10px;\n'
             'font: 11px "Malgun Gothic";\n'
             'font-weight: bold;\n'
             'color: rgb(230, 230, 230);\n'
             'text-align: center;\n'
-            '\n'
             '\n'
             '}\n'
             '\n'
@@ -960,7 +1095,79 @@ class IGBotGUI(object):
             '\n'
             ''
         )
-        self.button_start.setObjectName('button_start')
+        self.button_start_all.setObjectName('button_start_all')
+        self.button_stop_all = QtWidgets.QPushButton(self.frame_28)
+        self.button_stop_all.setGeometry(QtCore.QRect(230, 400, 150, 35))
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.button_stop_all.sizePolicy().hasHeightForWidth()
+        )
+        self.button_stop_all.setSizePolicy(sizePolicy)
+        self.button_stop_all.setMinimumSize(QtCore.QSize(150, 35))
+        self.button_stop_all.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
+        self.button_stop_all.setStyleSheet(
+            'QPushButton{\n'
+            'border: 1px solid rgb(70, 70, 82);\n'
+            'border-radius: 5px;\n'
+            'background-origin: content;\n'
+            'padding-left: 8px;\n'
+            'padding-right: 10px;\n'
+            'font: 11px "Malgun Gothic";\n'
+            'font-weight: bold;\n'
+            'color: rgb(230, 230, 230);\n'
+            'text-align: center;\n'
+            '\n'
+            '}\n'
+            '\n'
+            'QPushButton:hover{\n'
+            'background-color: rgb(80, 80, 92);\n'
+            '}\n'
+            '\n'
+            ''
+        )
+        self.button_stop_all.setObjectName('button_stop_all')
+        self.button_add_profiles = QtWidgets.QPushButton(self.frame_28)
+        self.button_add_profiles.setGeometry(QtCore.QRect(390, 400, 150, 35))
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.button_add_profiles.sizePolicy().hasHeightForWidth()
+        )
+        self.button_add_profiles.setSizePolicy(sizePolicy)
+        self.button_add_profiles.setMinimumSize(QtCore.QSize(150, 35))
+        self.button_add_profiles.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
+        self.button_add_profiles.setStyleSheet(
+            'QPushButton{\n'
+            'border: 1px solid rgb(70, 70, 82);\n'
+            'border-radius: 5px;\n'
+            'background-origin: content;\n'
+            'padding-left: 8px;\n'
+            'padding-right: 10px;\n'
+            'font: 11px "Malgun Gothic";\n'
+            'font-weight: bold;\n'
+            'color: rgb(230, 230, 230);\n'
+            'text-align: center;\n'
+            '\n'
+            '}\n'
+            '\n'
+            'QPushButton:hover{\n'
+            'background-color: rgb(80, 80, 92);\n'
+            '}\n'
+            '\n'
+            ''
+        )
+        self.button_add_profiles.setObjectName('button_add_profiles')
         self.verticalLayout_22.addWidget(self.frame_28)
         self.stackedWidget.addWidget(self.widget_page_start)
         self.widget_page_devices = QtWidgets.QWidget()
@@ -1376,7 +1583,7 @@ class IGBotGUI(object):
         _translate = QtCore.QCoreApplication.translate
         kwai_bot.setWindowTitle(_translate('kwai_bot', 'MainWindow'))
         self.page_devices.setText(_translate('kwai_bot', ' Dispositivos'))
-        self.page_start.setText(_translate('kwai_bot', '         Iniciar'))
+        self.page_start.setText(_translate('kwai_bot', '           Iniciar'))
         self.page_options.setText(_translate('kwai_bot', '    Configurações'))
         self.label_9.setText(
             _translate('kwai_bot', 'Defina o tempo entre ações')
@@ -1431,13 +1638,18 @@ class IGBotGUI(object):
         self.combobox_connected_devices.setItemText(
             0, _translate('kwai_bot', 'Nenhum dispositivo conectado')
         )
-        self.label_26.setText(
-            _translate('kwai_bot', 'Insira as contas abaixo:')
+        self.label_26.setText(_translate('kwai_bot', 'Usuário'))
+        self.label_27.setText(_translate('kwai_bot', 'Logs'))
+        self.label_28.setText(_translate('kwai_bot', 'Ações'))
+        self.label_29.setText(_translate('kwai_bot', '@willenrocha1'))
+        self.label_31.setText(
+            _translate('kwai_bot', 'Ação realizada com sucesso!')
         )
-        self.textedit_accounts.setPlaceholderText(
-            _translate('kwai_bot', 'username senha')
+        self.button_start_all.setText(_translate('kwai_bot', 'Iniciar tudo'))
+        self.button_stop_all.setText(_translate('kwai_bot', 'Parar tudo'))
+        self.button_add_profiles.setText(
+            _translate('kwai_bot', 'Adicionar perfis')
         )
-        self.button_start.setText(_translate('kwai_bot', 'Iniciar'))
         self.label.setText(_translate('kwai_bot', 'Conectar via Wi-Fi:'))
         self.button_change_to_wifi.setText(
             _translate('kwai_bot', 'Mudar para Wi-Fi')
@@ -1457,3 +1669,6 @@ class IGBotGUI(object):
         self.label_6.setText(_translate('kwai_bot', 'Ações'))
         self.label_7.setText(_translate('kwai_bot', '#12345'))
         self.label_8.setText(_translate('kwai_bot', '#56789'))
+
+
+from src.gui.resources import imagens_rc
