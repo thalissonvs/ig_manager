@@ -573,8 +573,8 @@ class MainView(IGBotGUI, QMainWindow):
         )
 
         menu = QtWidgets.QMenu()
-        menu.addAction('Ver informações')
-        menu.addAction('Remover perfil')
+        menu.addAction('Ver informações', lambda: self.view_profile_info(profile_info))
+        menu.addAction('Remover perfil', lambda: self.profiles_controller.remove_profile(username))
         menu.addAction(
             'Editar perfil',
             lambda: self.edit_profile_view.setup_view(profile_info),
@@ -594,3 +594,14 @@ class MainView(IGBotGUI, QMainWindow):
         )
         frame_profile.setParent(None)
         frame_profile.deleteLater()
+    
+    def view_profile_info(self, profile_info: dict) -> None:
+        text = f'''Usuário: {profile_info['username']}
+Senha: {profile_info['password']}
+Gênero: {profile_info['gender']}
+Ações de curtir realizadas: {profile_info['like_actions_done']}
+Ações de seguir realizadas: {profile_info['follow_actions_done']}
+Ações de comentar realizadas: {profile_info['comment_actions_done']}
+Status: {profile_info['status']}
+'''     
+        self.show_popup('Informações do perfil', text)

@@ -65,3 +65,7 @@ class ProfilesController(QObject):
         self._profiles_repository.edit_profile(
             old_username, new_username, password, gender
         )
+
+    def remove_profile(self, username: str) -> None:
+        self._profiles_model.remove_profile(username)
+        self._profiles_repository.remove_profile(username)
