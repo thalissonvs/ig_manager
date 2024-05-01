@@ -7,6 +7,7 @@ from src.gui.controllers.devices_controller import DevicesController
 from src.gui.controllers.profiles_controller import ProfilesController
 from src.gui.resources.main_view_rc import IGBotGUI
 from src.gui.views.add_profiles_view import AddProfilesView
+from src.gui.views.edit_profile_view import EditProfileView
 
 
 class MainView(IGBotGUI, QMainWindow):
@@ -16,6 +17,7 @@ class MainView(IGBotGUI, QMainWindow):
         devices_controller: DevicesController,
         profiles_controller: ProfilesController,
         add_profiles_view: AddProfilesView,
+        edit_profile_view: EditProfileView,
         parent=None,
     ) -> None:
         super().__init__(parent)
@@ -24,6 +26,7 @@ class MainView(IGBotGUI, QMainWindow):
         self.devices_controller = devices_controller
         self.profiles_controller = profiles_controller
         self.add_profiles_view = add_profiles_view
+        self.edit_profile_view = edit_profile_view
         self.config_controller.config_changed.connect(self.set_options_at_view)
         self.config_controller.set_initial_options()
         self.button_save_config.clicked.connect(self.save_options)
@@ -35,6 +38,9 @@ class MainView(IGBotGUI, QMainWindow):
 
         self.profiles_controller.profile_added.connect(
             self.create_profile_frame
+        )
+        self.profiles_controller.profile_removed.connect(
+            self.remove_profile_frame
         )
 
         self.button_change_to_wifi.clicked.connect(
@@ -566,8 +572,25 @@ class MainView(IGBotGUI, QMainWindow):
             'button_profile_actions_' + username
         )
 
+        menu = QtWidgets.QMenu()
+        menu.addAction('Ver informações')
+        menu.addAction('Remover perfil')
+        menu.addAction(
+            'Editar perfil',
+            lambda: self.edit_profile_view.setup_view(profile_info),
+        )
+
+        button_profile_actions.setMenu(menu)
+
         vertical_layout_3.addWidget(button_profile_actions)
         horizontal_layout.addWidget(
             frame_profile_actions, 0, QtCore.Qt.AlignHCenter
         )
         self.verticalLayout_26.addWidget(main_frame)
+
+    def remove_profile_frame(self, profile_username: str) -> None:
+        frame_profile = self.findChild(
+            QtWidgets.QFrame, 'frame_profile_' + profile_username
+        )
+        frame_profile.setParent(None)
+        frame_profile.deleteLater()

@@ -131,6 +131,21 @@ class ProfilesModel(QObject):
         for username, profile in self._devices.items():
             profiles[username] = profile.get_profile_info()
         return profiles
-    
+
     def get_profile(self, username: str) -> ProfileModel:
         return self._devices[username].get_profile_info()
+
+    def edit_profile(
+        self, old_username: str, new_username: str, password: str, gender: str
+    ) -> None:
+        
+        profile = self._devices[old_username]
+        profile.password = password
+        profile.gender = gender
+        profile.username = new_username
+        self._devices[new_username] = profile
+
+        if old_username != new_username:
+            del self._devices[old_username]
+            self.profile_added.emit(profile.get_profile_info())
+            self.profile_removed.emit(old_username)

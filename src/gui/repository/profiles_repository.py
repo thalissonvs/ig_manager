@@ -19,13 +19,28 @@ class ProfilesRepository:
             return {}
         except json.JSONDecodeError:
             return {}
-    
+
     def add_new_profile(self, profile: dict) -> None:
         profiles = self.get_profiles()
         profiles[profile['username']] = profile
         self.set_profiles(profiles)
-    
+
     def remove_profile(self, username: str) -> None:
         profiles = self.get_profiles()
         profiles.pop(username)
+        self.set_profiles(profiles)
+
+    def edit_profile(
+        self, old_username: str, new_username: str, password: str, gender: str
+    ) -> None:
+        profiles = self.get_profiles()
+        profile = profiles[old_username]
+        profile['username'] = new_username
+        profile['password'] = password
+        profile['gender'] = gender
+        profiles[new_username] = profile
+        
+        if old_username != new_username:
+            profiles.pop(old_username)
+        
         self.set_profiles(profiles)

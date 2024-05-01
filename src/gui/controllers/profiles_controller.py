@@ -4,8 +4,8 @@ import time
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from src.gui.models.profiles_model import ProfilesModel
-from src.gui.services.profiles_service import ProfilesService
 from src.gui.repository.profiles_repository import ProfilesRepository
+from src.gui.services.profiles_service import ProfilesService
 
 
 class ProfilesController(QObject):
@@ -15,7 +15,10 @@ class ProfilesController(QObject):
     show_popup_signal = pyqtSignal(str, str)
 
     def __init__(
-        self, profiles_model: ProfilesModel, profiles_service: ProfilesService, profiles_repository: ProfilesRepository
+        self,
+        profiles_model: ProfilesModel,
+        profiles_service: ProfilesService,
+        profiles_repository: ProfilesRepository,
     ) -> None:
         super().__init__()
         self._profiles_model = profiles_model
@@ -47,8 +50,18 @@ class ProfilesController(QObject):
         profiles = self._profiles_service.format_profiles_text(profiles_text)
         for profile in profiles:
             self.add_single_profile(**profile)
-    
+
     def add_initial_profiles(self) -> None:
         profiles = self._profiles_repository.get_profiles()
         for profile in profiles.values():
             self._profiles_model.add_profile(**profile)
+
+    def edit_profile(
+        self, old_username: str, new_username: str, password: str, gender: str
+    ) -> None:
+        self._profiles_model.edit_profile(
+            old_username, new_username, password, gender
+        )
+        self._profiles_repository.edit_profile(
+            old_username, new_username, password, gender
+        )
