@@ -54,3 +54,18 @@ Com tudo configurado corretamente, fica simples, sempre que for executar o proje
 ```bash
 python .\main.py
 ```
+
+Certifique-se de que, antes de executar, o ambiente virtual criado pelo poetry esteja habilitado no terminal.
+Geralmente isso aparece como algo assim:
+
+```bash
+(ig-manager-py3.12) C:\Users\Thalisson Vinicius\Documents\Programacao\python\ig_manager>
+```
+
+Caso não esteja, basta executar o comando:
+
+```bash
+poetry shell
+```
+
+Esse comando se certificará de habilitar o ambiente virtual no seu terminal atual.
