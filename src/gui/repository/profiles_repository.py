@@ -39,8 +39,8 @@ class ProfilesRepository:
         profile['password'] = password
         profile['gender'] = gender
         profiles[new_username] = profile
-        
+
         if old_username != new_username:
             profiles.pop(old_username)
-        
+
         self.set_profiles(profiles)

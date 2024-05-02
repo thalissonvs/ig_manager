@@ -10,6 +10,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from src.gui.resources import imagens_rc
+
 
 class IGBotGUI(object):
     def setupUi(self, kwai_bot):
@@ -791,6 +793,126 @@ class IGBotGUI(object):
         self.horizontalLayout_11.addWidget(self.label_23)
         self.verticalLayout_21.addWidget(
             self.frame_rest_goal, 0, QtCore.Qt.AlignHCenter
+        )
+        self.label_30 = QtWidgets.QLabel(self.frame_20)
+        self.label_30.setStyleSheet(
+            'font: 11px "Yu Gothic UI Semilight";\n'
+            'color: rgb(230, 230, 230);\n'
+            'font-weight:bold;'
+        )
+        self.label_30.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_30.setObjectName('label_30')
+        self.verticalLayout_21.addWidget(self.label_30)
+        self.frame_29 = QtWidgets.QFrame(self.frame_20)
+        self.frame_29.setMinimumSize(QtCore.QSize(0, 30))
+        self.frame_29.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_29.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_29.setObjectName('frame_29')
+        self.horizontalLayout_17 = QtWidgets.QHBoxLayout(self.frame_29)
+        self.horizontalLayout_17.setObjectName('horizontalLayout_17')
+        self.radiobutton_android_automation = QtWidgets.QRadioButton(
+            self.frame_29
+        )
+        self.radiobutton_android_automation.setStyleSheet(
+            'QRadioButton{\n'
+            'font: 11px "Malgun Gothic";\n'
+            'color: rgb(172, 172, 174);\n'
+            'font-weight: bold;\n'
+            '}\n'
+            'QRadioButton::indicator:checked{\n'
+            '    background-color: rgb(172, 172, 174);\n'
+            '    border-radius: 6px;\n'
+            '    border: 2px solid rgb(165, 165, 165)\n'
+            '}\n'
+            '\n'
+            '\n'
+            ''
+        )
+        self.radiobutton_android_automation.setObjectName(
+            'radiobutton_android_automation'
+        )
+        self.horizontalLayout_17.addWidget(self.radiobutton_android_automation)
+        self.radiobutton_desktop_automation = QtWidgets.QRadioButton(
+            self.frame_29
+        )
+        self.radiobutton_desktop_automation.setStyleSheet(
+            'QRadioButton{\n'
+            'font: 11px "Malgun Gothic";\n'
+            'color: rgb(172, 172, 174);\n'
+            'font-weight: bold;\n'
+            '}\n'
+            'QRadioButton::indicator:checked{\n'
+            '    background-color: rgb(172, 172, 174);\n'
+            '    border-radius: 6px;\n'
+            '    border: 2px solid rgb(165, 165, 165)\n'
+            '}\n'
+            ''
+        )
+        self.radiobutton_desktop_automation.setObjectName(
+            'radiobutton_desktop_automation'
+        )
+        self.horizontalLayout_17.addWidget(self.radiobutton_desktop_automation)
+        self.verticalLayout_21.addWidget(
+            self.frame_29, 0, QtCore.Qt.AlignHCenter
+        )
+        self.label_32 = QtWidgets.QLabel(self.frame_20)
+        self.label_32.setStyleSheet(
+            'font: 11px "Yu Gothic UI Semilight";\n'
+            'color: rgb(230, 230, 230);\n'
+            'font-weight:bold;'
+        )
+        self.label_32.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_32.setObjectName('label_32')
+        self.verticalLayout_21.addWidget(self.label_32)
+        self.frame_36 = QtWidgets.QFrame(self.frame_20)
+        self.frame_36.setMinimumSize(QtCore.QSize(0, 30))
+        self.frame_36.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_36.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_36.setObjectName('frame_36')
+        self.horizontalLayout_18 = QtWidgets.QHBoxLayout(self.frame_36)
+        self.horizontalLayout_18.setObjectName('horizontalLayout_18')
+        self.radiobutton_lite_instagram = QtWidgets.QRadioButton(self.frame_36)
+        self.radiobutton_lite_instagram.setStyleSheet(
+            'QRadioButton{\n'
+            'font: 11px "Malgun Gothic";\n'
+            'color: rgb(172, 172, 174);\n'
+            'font-weight: bold;\n'
+            '}\n'
+            'QRadioButton::indicator:checked{\n'
+            '    background-color: rgb(172, 172, 174);\n'
+            '    border-radius: 6px;\n'
+            '    border: 2px solid rgb(165, 165, 165)\n'
+            '}\n'
+            '\n'
+            '\n'
+            ''
+        )
+        self.radiobutton_lite_instagram.setObjectName(
+            'radiobutton_lite_instagram'
+        )
+        self.horizontalLayout_18.addWidget(self.radiobutton_lite_instagram)
+        self.radiobutton_official_instagram = QtWidgets.QRadioButton(
+            self.frame_36
+        )
+        self.radiobutton_official_instagram.setStyleSheet(
+            'QRadioButton{\n'
+            'font: 11px "Malgun Gothic";\n'
+            'color: rgb(172, 172, 174);\n'
+            'font-weight: bold;\n'
+            '}\n'
+            'QRadioButton::indicator:checked{\n'
+            '    background-color: rgb(172, 172, 174);\n'
+            '    border-radius: 6px;\n'
+            '    border: 2px solid rgb(165, 165, 165)\n'
+            '}\n'
+            ''
+        )
+        self.radiobutton_official_instagram.setObjectName(
+            'radiobutton_official_instagram'
+        )
+        self.horizontalLayout_18.addWidget(self.radiobutton_official_instagram)
+        self.verticalLayout_21.addWidget(
+            self.frame_36, 0, QtCore.Qt.AlignHCenter
         )
         self.horizontalLayout_5.addWidget(
             self.frame_20, 0, QtCore.Qt.AlignVCenter
@@ -1629,6 +1751,24 @@ class IGBotGUI(object):
         self.label_22.setText(_translate('kwai_bot', 'Descansar'))
         self.label_24.setText(_translate('kwai_bot', 'min a cada'))
         self.label_23.setText(_translate('kwai_bot', 'ações'))
+        self.label_30.setText(
+            _translate('kwai_bot', 'Selecione a plataforma de automação')
+        )
+        self.radiobutton_android_automation.setText(
+            _translate('kwai_bot', 'Android')
+        )
+        self.radiobutton_desktop_automation.setText(
+            _translate('kwai_bot', 'Desktop')
+        )
+        self.label_32.setText(
+            _translate('kwai_bot', 'Selecione o APP de automação')
+        )
+        self.radiobutton_lite_instagram.setText(
+            _translate('kwai_bot', 'Instagram Lite')
+        )
+        self.radiobutton_official_instagram.setText(
+            _translate('kwai_bot', 'Instagram Oficial')
+        )
         self.button_save_config.setText(
             _translate('kwai_bot', 'Salvar configurações')
         )
@@ -1669,6 +1809,3 @@ class IGBotGUI(object):
         self.label_6.setText(_translate('kwai_bot', 'Ações'))
         self.label_7.setText(_translate('kwai_bot', '#12345'))
         self.label_8.setText(_translate('kwai_bot', '#56789'))
-
-
-from src.gui.resources import imagens_rc

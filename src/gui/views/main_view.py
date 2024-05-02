@@ -102,6 +102,10 @@ class MainView(IGBotGUI, QMainWindow):
             options[OptionsKeys.REST_GOAL_ACTIONS]
         )
         self.set_rest_goal_time_value(options[OptionsKeys.REST_GOAL_TIME])
+        self.set_automation_platform_value(
+            options[OptionsKeys.AUTOMATION_PLATFORM]
+        )
+        self.set_automation_app_value(options[OptionsKeys.AUTOMATION_APP])
 
     def save_options(self) -> None:
         options_object = self.get_options_object()
@@ -121,6 +125,8 @@ class MainView(IGBotGUI, QMainWindow):
             OptionsKeys.ENABLE_REST_GOAL: self.get_enable_rest_goal_value(),
             OptionsKeys.REST_GOAL_ACTIONS: self.get_rest_goal_actions_value(),
             OptionsKeys.REST_GOAL_TIME: self.get_rest_goal_time_value(),
+            OptionsKeys.AUTOMATION_PLATFORM: self.get_automation_platform_value(),
+            OptionsKeys.AUTOMATION_APP: self.get_automation_app_value(),
         }
 
     def show_popup(self, title: str, text: str) -> None:
@@ -169,6 +175,16 @@ class MainView(IGBotGUI, QMainWindow):
     def set_rest_goal_time_value(self, value: int) -> None:
         self.spinbox_minutes_rest.setValue(value)
 
+    def set_automation_platform_value(self, value: str) -> None:
+        self.radiobutton_android_automation.setChecked(value == 'android')
+        self.radiobutton_desktop_automation.setChecked(value == 'desktop')
+
+    def set_automation_app_value(self, value: str) -> None:
+        self.radiobutton_lite_instagram.setChecked(value == 'lite_instagram')
+        self.radiobutton_official_instagram.setChecked(
+            value == 'official_instagram'
+        )
+
     def get_time_between_actions_min_value(self) -> int:
         return self.spinbox_min_time_actions.value()
 
@@ -204,6 +220,20 @@ class MainView(IGBotGUI, QMainWindow):
 
     def get_rest_goal_time_value(self) -> int:
         return self.spinbox_minutes_rest.value()
+
+    def get_automation_platform_value(self) -> str:
+        return (
+            'android'
+            if self.radiobutton_android_automation.isChecked()
+            else 'desktop'
+        )
+
+    def get_automation_app_value(self) -> str:
+        return (
+            'lite_instagram'
+            if self.radiobutton_lite_instagram.isChecked()
+            else 'official_instagram'
+        )
 
     def set_device_on_view(self, device_info: dict) -> None:
         self._create_device_frame(device_info)
@@ -573,8 +603,13 @@ class MainView(IGBotGUI, QMainWindow):
         )
 
         menu = QtWidgets.QMenu()
-        menu.addAction('Ver informações', lambda: self.view_profile_info(profile_info))
-        menu.addAction('Remover perfil', lambda: self.profiles_controller.remove_profile(username))
+        menu.addAction(
+            'Ver informações', lambda: self.view_profile_info(profile_info)
+        )
+        menu.addAction(
+            'Remover perfil',
+            lambda: self.profiles_controller.remove_profile(username),
+        )
         menu.addAction(
             'Editar perfil',
             lambda: self.edit_profile_view.setup_view(profile_info),
@@ -594,14 +629,15 @@ class MainView(IGBotGUI, QMainWindow):
         )
         frame_profile.setParent(None)
         frame_profile.deleteLater()
-    
+
     def view_profile_info(self, profile_info: dict) -> None:
-        text = f'''Usuário: {profile_info['username']}
-Senha: {profile_info['password']}
-Gênero: {profile_info['gender']}
-Ações de curtir realizadas: {profile_info['like_actions_done']}
-Ações de seguir realizadas: {profile_info['follow_actions_done']}
-Ações de comentar realizadas: {profile_info['comment_actions_done']}
-Status: {profile_info['status']}
-'''     
+        text = f"""
+        Usuário: {profile_info['username']}
+        Senha: {profile_info['password']}
+        Gênero: {profile_info['gender']}
+        Ações de curtir realizadas: {profile_info['like_actions_done']}
+        Ações de seguir realizadas: {profile_info['follow_actions_done']}
+        Ações de comentar realizadas: {profile_info['comment_actions_done']}          
+        Status: {profile_info['status']}
+        """
         self.show_popup('Informações do perfil', text)

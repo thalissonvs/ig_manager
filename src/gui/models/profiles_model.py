@@ -138,7 +138,7 @@ class ProfilesModel(QObject):
     def edit_profile(
         self, old_username: str, new_username: str, password: str, gender: str
     ) -> None:
-        
+
         profile = self._devices[old_username]
         profile.password = password
         profile.gender = gender
