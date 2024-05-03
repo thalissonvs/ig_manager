@@ -20,7 +20,10 @@ encontrar para download [aqui](https://github.com/pyenv-win/pyenv-win).
    de instalar todas as dependências e resolver conflitos de versão, cria um ambiente virtual automaticamente, assim não instalando
    bibliotecas no seu python global. A forma mais eficiente de instalar o `poetry` segundo a [documentação oficial](https://python-poetry.org/docs/)
    é utilizando o `pipx`, que nada mais é que uma forma de instalar uma ferramenta de linha de comando de maneira descentralizada, que irá funcionar
-   independentemente da versão do python instalada. Para instalar o `pipx` é simples, basta executar:
+   independentemente da versão do python instalada. O `pipx` instala cada aplicativo em seu próprio ambiente virtual, garantindo que não haja conflitos
+   de dependência entre diferentes ferramentas que você pode usar. Isso é especialmente útil para ferramentas de linha de comando como o `poetry`,
+   que têm suas próprias dependências que podem não ser compatíveis com as de outros pacotes python instalados globalmente.  Uma vez instalado com `pipx`,
+   o `poetry` pode ser usado globalmente em qualquer terminal, independentemente do ambiente python ativo. Para instalar o `pipx` é simples, basta executar:
 
    ```bash
    python -m pip install pipx
@@ -35,7 +38,7 @@ encontrar para download [aqui](https://github.com/pyenv-win/pyenv-win).
 
    E pronto! o gerenciador de dependências está instalado.
 
-5. Com o `poetry` instalado, agora basta instalar todas as dependências com o comando:
+6. Com o `poetry` instalado, agora basta instalar todas as dependências com o comando:
 
    ```bash
    poetry install
@@ -54,3 +57,18 @@ Com tudo configurado corretamente, fica simples, sempre que for executar o proje
 ```bash
 python .\main.py
 ```
+
+Certifique-se de que, antes de executar, o ambiente virtual criado pelo poetry esteja habilitado no terminal.
+Geralmente isso aparece como algo assim:
+
+```bash
+(ig-manager-py3.12) C:\Users\Thalisson Vinicius\Documents\Programacao\python\ig_manager>
+```
+
+Caso não esteja, basta executar o comando:
+
+```bash
+poetry shell
+```
+
+Esse comando se certificará de habilitar o ambiente virtual no seu terminal atual.
