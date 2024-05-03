@@ -1,5 +1,6 @@
-from src.interfaces.i_automator import IAutomator
 import uiautomator2 as u2
+
+from src.interfaces.i_automator import IAutomator
 
 
 class AndroidAutomator(IAutomator):
