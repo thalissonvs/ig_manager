@@ -58,6 +58,7 @@ class MainView(IGBotGUI, QMainWindow):
         self.profiles_controller.add_initial_profiles()
         self.devices_controller.watch_devices()
         self.set_page_events()
+        self.set_widgets_events()
         self.frame_4.hide()
         self.frame_5.hide()   # temporário
         self.frame_33.hide()
@@ -71,6 +72,20 @@ class MainView(IGBotGUI, QMainWindow):
         )
         self.page_options.clicked.connect(
             lambda: self.stackedWidget.setCurrentIndex(0)
+        )
+
+    def set_widgets_events(self) -> None:
+        self.radiobutton_change_actions.toggled.connect(
+            self.update_widtgets_visibility
+        )
+        self.radiobutton_enable_goal.toggled.connect(
+            self.update_widtgets_visibility
+        )
+        self.radiobutton_enable_rest_goal.toggled.connect(
+            self.update_widtgets_visibility
+        )
+        self.radiobutton_android_automation.toggled.connect(
+            self.update_widtgets_visibility
         )
 
     def set_options_at_view(self, options: dict) -> None:
@@ -111,6 +126,29 @@ class MainView(IGBotGUI, QMainWindow):
         options_object = self.get_options_object()
         self.config_controller.save_options(options_object)
 
+    def update_widtgets_visibility(self) -> None:
+        if self.radiobutton_change_actions.isChecked():
+            self.frame_change_actions.show()
+        else:
+            self.frame_change_actions.hide()
+        
+        if self.radiobutton_enable_goal.isChecked():
+            self.frame_goal_actions.show()
+        else:
+            self.frame_goal_actions.hide()
+        
+        if self.radiobutton_enable_rest_goal.isChecked():
+            self.frame_rest_goal.show()
+        else:
+            self.frame_rest_goal.hide()
+        
+        if self.radiobutton_android_automation.isChecked():
+            self.label_32.show()
+            self.frame_36.show()
+        else:
+            self.label_32.hide()
+            self.frame_36.hide()
+        
     def get_options_object(self) -> dict:
         return {
             OptionsKeys.TIME_BETWEEN_ACTIONS_MIN: self.get_time_between_actions_min_value(),
