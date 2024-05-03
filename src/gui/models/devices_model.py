@@ -96,3 +96,6 @@ class DevicesModel(QObject):
         for device_id, device in self._devices.items():
             devices[device_id] = device.get_device_info()
         return devices
+
+    def get_device(self, device_id: str) -> dict:
+        return self._devices[device_id].get_device_info()
