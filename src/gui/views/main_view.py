@@ -5,6 +5,7 @@ from src.gui.constants import OptionsKeys
 from src.gui.controllers.config_controller import ConfigController
 from src.gui.controllers.devices_controller import DevicesController
 from src.gui.controllers.profiles_controller import ProfilesController
+from src.gui.controllers.start_controller import StartController
 from src.gui.resources.main_view_rc import IGBotGUI
 from src.gui.views.add_profiles_view import AddProfilesView
 from src.gui.views.edit_profile_view import EditProfileView
@@ -16,6 +17,7 @@ class MainView(IGBotGUI, QMainWindow):
         config_controller: ConfigController,
         devices_controller: DevicesController,
         profiles_controller: ProfilesController,
+        start_controller: StartController,
         add_profiles_view: AddProfilesView,
         edit_profile_view: EditProfileView,
         parent=None,
@@ -25,6 +27,7 @@ class MainView(IGBotGUI, QMainWindow):
         self.config_controller = config_controller
         self.devices_controller = devices_controller
         self.profiles_controller = profiles_controller
+        self.start_controller = start_controller
         self.add_profiles_view = add_profiles_view
         self.edit_profile_view = edit_profile_view
         self.config_controller.config_changed.connect(self.set_options_at_view)
@@ -35,6 +38,7 @@ class MainView(IGBotGUI, QMainWindow):
             self.remove_device_from_view
         )
         self.devices_controller.show_popup_signal.connect(self.show_popup)
+        self.start_controller.show_popup_signal.connect(self.show_popup)
 
         self.profiles_controller.profile_added.connect(
             self.create_profile_frame
@@ -131,24 +135,24 @@ class MainView(IGBotGUI, QMainWindow):
             self.frame_change_actions.show()
         else:
             self.frame_change_actions.hide()
-        
+
         if self.radiobutton_enable_goal.isChecked():
             self.frame_goal_actions.show()
         else:
             self.frame_goal_actions.hide()
-        
+
         if self.radiobutton_enable_rest_goal.isChecked():
             self.frame_rest_goal.show()
         else:
             self.frame_rest_goal.hide()
-        
+
         if self.radiobutton_android_automation.isChecked():
             self.label_32.show()
             self.frame_36.show()
         else:
             self.label_32.hide()
             self.frame_36.hide()
-        
+
     def get_options_object(self) -> dict:
         return {
             OptionsKeys.TIME_BETWEEN_ACTIONS_MIN: self.get_time_between_actions_min_value(),
@@ -641,6 +645,7 @@ class MainView(IGBotGUI, QMainWindow):
         )
 
         menu = QtWidgets.QMenu()
+        menu.addAction('Iniciar', lambda: self.start_bot(profile_info))
         menu.addAction(
             'Ver informações', lambda: self.view_profile_info(profile_info)
         )
@@ -660,6 +665,15 @@ class MainView(IGBotGUI, QMainWindow):
             frame_profile_actions, 0, QtCore.Qt.AlignHCenter
         )
         self.verticalLayout_26.addWidget(main_frame)
+
+    def start_bot(self, profile_info: dict) -> None:
+        current_device = self.combobox_connected_devices.currentText()
+        device_id = (
+            None
+            if current_device == 'Nenhum dispositivo conectado'
+            else current_device.split(' ')[1]
+        )
+        self.start_controller.start_bot(profile_info, device_id)
 
     def remove_profile_frame(self, profile_username: str) -> None:
         frame_profile = self.findChild(
