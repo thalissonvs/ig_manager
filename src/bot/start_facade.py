@@ -1,19 +1,17 @@
-from src.automators.automator_factory import AutomatorFactory
-from src.bot.instagram_bot import InstagramBot
+from src.automators.android_automator import AndroidAutomator
+from src.bot.bot import Bot
 from src.gui.models.config_model import ConfigModel
 from src.gui.models.devices_model import DevicesModel
 from src.gui.models.profiles_model import ProfilesModel
-from src.instagram.instagram_manager import InstagramManager
+from src.managers.instagram_manager import InstagramManager
 from src.selectors.selectors_factory import SelectorsFactory
 
 
-class InstagramBotFacade:
+class StartBotFacade:
     def __init__(
         self,
-        automator_factory: AutomatorFactory,
         selectors_factory: SelectorsFactory,
     ) -> None:
-        self.automator_factory = automator_factory
         self.selectors_factory = selectors_factory
 
     def start(
@@ -27,17 +25,13 @@ class InstagramBotFacade:
         device_info = (
             devices_model.get_device(device_id) if device_id else None
         )
-        automation_platform = config_model.automation_platform
-        automation_app = config_model.automation_app
+        automation_app = config_model.automation_app if device_info else None
 
-        automator = self.automator_factory.create_automator(
-            automation_platform, device_info
-        )
+        automator = AndroidAutomator(device_info, automation_app)
+
         selectors = self.selectors_factory.create_selectors(
-            automation_platform, automation_app
+            automation_app
         )
         instagram_manager = InstagramManager(automator, selectors)
-        instagram_bot = InstagramBot(
-            instagram_manager, profiles_model, config_model
-        )
+        instagram_bot = Bot(instagram_manager, profiles_model, config_model)
         return instagram_bot.start(profile_info)

@@ -7,19 +7,26 @@ da aplicação e refletir na interface gráfica.
 """
 from src.gui.models.config_model import ConfigModel
 from src.gui.models.profiles_model import ProfilesModel
-from src.instagram.instagram_manager import InstagramManager
+from src.interfaces.i_manager import IManager
 
 
-class InstagramBot:
+class Bot:
     def __init__(
         self,
-        instagram_manager: InstagramManager,
+        manager: IManager,
         profiles_model: ProfilesModel,
         config_model: ConfigModel,
     ) -> None:
-        self.instagram_manager = instagram_manager
+        self.manager = manager
         self.config_model = config_model
         self.profiles_model = profiles_model
 
-    def start(self, profile_info: dict):
-        print('Bot started with profile:', profile_info)
+    def start(self, profile_info: dict) -> None:
+        username = profile_info['username']
+        self.profiles_model.update_profile_log(username, 'Realizando login...')
+        status = self.manager.login(profile_info['username'], profile_info['password'])
+        if status:
+            self.profiles_model.update_profile_log(username, 'Login realizado com sucesso.')
+        else:
+            self.profiles_model.update_profile_log(username, 'Erro ao realizar login.')
+            return
