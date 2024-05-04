@@ -2,8 +2,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from src.automators.automator_factory import AutomatorFactory
-from src.bot.instagram_bot_facade import InstagramBotFacade
+from src.bot.start_facade import StartBotFacade
 from src.gui.controllers.config_controller import ConfigController
 from src.gui.controllers.devices_controller import DevicesController
 from src.gui.controllers.profiles_controller import ProfilesController
@@ -36,9 +35,8 @@ if __name__ == '__main__':
     edit_profile_view = EditProfileView(profiles_controller)
     add_profiles_view = AddProfilesView(profiles_controller)
 
-    automator_factory = AutomatorFactory()
     selectors_factory = SelectorsFactory()
-    bot_facade = InstagramBotFacade(automator_factory, selectors_factory)
+    bot_facade = StartBotFacade(selectors_factory)
 
     start_controller = StartController(
         devices_model, profiles_model, config_model, bot_facade
