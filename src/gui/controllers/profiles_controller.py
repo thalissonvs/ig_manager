@@ -12,6 +12,7 @@ class ProfilesController(QObject):
 
     profile_added = pyqtSignal(dict)
     profile_removed = pyqtSignal(str)
+    profile_edited = pyqtSignal(dict)
     show_popup_signal = pyqtSignal(str, str)
 
     def __init__(
@@ -28,6 +29,10 @@ class ProfilesController(QObject):
         self._profiles_model.profile_removed.connect(
             self._emit_profile_removed
         )
+        self._profiles_model.profile_edited.connect(self._emit_profile_edited)
+
+    def _emit_profile_edited(self, profile_info: dict) -> None:
+        self.profile_edited.emit(profile_info)
 
     def _emit_profile_added(self, profile_info: dict) -> None:
         self.profile_added.emit(profile_info)
