@@ -9,7 +9,7 @@ from src.gui.controllers.start_controller import StartController
 from src.gui.resources.main_view_rc import IGBotGUI
 from src.gui.views.add_profiles_view import AddProfilesView
 from src.gui.views.edit_profile_view import EditProfileView
-
+import time
 
 class MainView(IGBotGUI, QMainWindow):
     def __init__(
@@ -46,6 +46,7 @@ class MainView(IGBotGUI, QMainWindow):
         self.profiles_controller.profile_removed.connect(
             self.remove_profile_frame
         )
+        self.profiles_controller.profile_edited.connect(self.edit_profile_frame)
 
         self.button_change_to_wifi.clicked.connect(
             lambda: self.devices_controller.change_devices_connection_to_wifi(
@@ -61,6 +62,9 @@ class MainView(IGBotGUI, QMainWindow):
 
         self.profiles_controller.add_initial_profiles()
         self.devices_controller.watch_devices()
+
+        self.start_worker = StartWorker(self.start_controller)
+    
         self.set_page_events()
         self.set_widgets_events()
         self.frame_4.hide()
@@ -673,7 +677,10 @@ class MainView(IGBotGUI, QMainWindow):
             if current_device == 'Nenhum dispositivo conectado'
             else current_device.split(' ')[1]
         )
-        self.start_controller.start_bot(profile_info, device_id)
+
+        self.start_worker.profile_info = profile_info
+        self.start_worker.device_id = device_id
+        self.start_worker.start()
 
     def remove_profile_frame(self, profile_username: str) -> None:
         frame_profile = self.findChild(
@@ -681,6 +688,20 @@ class MainView(IGBotGUI, QMainWindow):
         )
         frame_profile.setParent(None)
         frame_profile.deleteLater()
+    
+    def edit_profile_frame(self, profile_info: dict) -> None:
+        username = profile_info['username']
+        log = profile_info['current_log']
+
+        label_profile_username = self.findChild(
+            QtWidgets.QLabel, 'label_profile_username_' + username
+        )
+        label_profile_username.setText('@' + username)
+
+        label_profile_log = self.findChild(
+            QtWidgets.QLabel, 'label_profile_log_' + username
+        )
+        label_profile_log.setText(log)
 
     def view_profile_info(self, profile_info: dict) -> None:
         text = f"""
@@ -693,3 +714,23 @@ class MainView(IGBotGUI, QMainWindow):
         Status: {profile_info['status']}
         """
         self.show_popup('Informações do perfil', text)
+
+
+class StartWorker(QtCore.QThread):
+    
+    finished = QtCore.pyqtSignal()
+
+    def __init__(self, start_controller: StartController) -> None:
+        super().__init__()
+        self.start_controller = start_controller
+        self.profile_info = None
+        self.device_id = None
+
+    def run(self) -> None:
+        while not self.profile_info:
+            time.sleep(1)
+        self.start_controller.start_bot(self.profile_info, self.device_id)
+        
+
+        
+        
