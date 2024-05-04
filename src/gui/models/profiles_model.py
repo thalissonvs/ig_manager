@@ -94,6 +94,7 @@ class ProfilesModel(QObject):
 
     profile_added = pyqtSignal(dict)
     profile_removed = pyqtSignal(str)
+    profile_edited = pyqtSignal(dict)
 
     def __init__(self) -> None:
         super().__init__()
@@ -149,3 +150,25 @@ class ProfilesModel(QObject):
             del self._devices[old_username]
             self.profile_added.emit(profile.get_profile_info())
             self.profile_removed.emit(old_username)
+
+    def update_profile_status(self, username: str, status: str) -> None:
+        self._devices[username].status = status
+        self.profile_edited.emit(username)
+    
+    def update_profile_log(self, username: str, log: str) -> None:
+        self._devices[username].current_log = log
+        self.profile_edited.emit(self._devices[username].get_profile_info())
+    
+    def update_profile_like_actions_done(self, username: str, like_actions_done: int) -> None:
+        self._devices[username].like_actions_done = like_actions_done
+        self.profile_edited.emit(self._devices[username].get_profile_info())
+    
+    def update_profile_follow_actions_done(self, username: str, follow_actions_done: int) -> None:
+        self._devices[username].follow_actions_done = follow_actions_done
+        self.profile_edited.emit(self._devices[username].get_profile_info())
+    
+    def update_profile_comment_actions_done(self, username: str, comment_actions_done: int) -> None:
+        self._devices[username].comment_actions_done = comment_actions_done
+        self.profile_edited.emit(self._devices[username].get_profile_info())
+    
+
