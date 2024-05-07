@@ -10,13 +10,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from src.gui.resources import imagens_rc
-
 
 class IGBotGUI(object):
     def setupUi(self, kwai_bot):
         kwai_bot.setObjectName('kwai_bot')
-        kwai_bot.resize(772, 453)
+        kwai_bot.resize(772, 454)
         self.centralwidget = QtWidgets.QWidget(kwai_bot)
         self.centralwidget.setObjectName('centralwidget')
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -794,67 +792,6 @@ class IGBotGUI(object):
         self.verticalLayout_21.addWidget(
             self.frame_rest_goal, 0, QtCore.Qt.AlignHCenter
         )
-        self.label_30 = QtWidgets.QLabel(self.frame_20)
-        self.label_30.setStyleSheet(
-            'font: 11px "Yu Gothic UI Semilight";\n'
-            'color: rgb(230, 230, 230);\n'
-            'font-weight:bold;'
-        )
-        self.label_30.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_30.setObjectName('label_30')
-        self.verticalLayout_21.addWidget(self.label_30)
-        self.frame_29 = QtWidgets.QFrame(self.frame_20)
-        self.frame_29.setMinimumSize(QtCore.QSize(0, 30))
-        self.frame_29.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_29.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_29.setObjectName('frame_29')
-        self.horizontalLayout_17 = QtWidgets.QHBoxLayout(self.frame_29)
-        self.horizontalLayout_17.setObjectName('horizontalLayout_17')
-        self.radiobutton_android_automation = QtWidgets.QRadioButton(
-            self.frame_29
-        )
-        self.radiobutton_android_automation.setStyleSheet(
-            'QRadioButton{\n'
-            'font: 11px "Malgun Gothic";\n'
-            'color: rgb(172, 172, 174);\n'
-            'font-weight: bold;\n'
-            '}\n'
-            'QRadioButton::indicator:checked{\n'
-            '    background-color: rgb(172, 172, 174);\n'
-            '    border-radius: 6px;\n'
-            '    border: 2px solid rgb(165, 165, 165)\n'
-            '}\n'
-            '\n'
-            '\n'
-            ''
-        )
-        self.radiobutton_android_automation.setObjectName(
-            'radiobutton_android_automation'
-        )
-        self.horizontalLayout_17.addWidget(self.radiobutton_android_automation)
-        self.radiobutton_desktop_automation = QtWidgets.QRadioButton(
-            self.frame_29
-        )
-        self.radiobutton_desktop_automation.setStyleSheet(
-            'QRadioButton{\n'
-            'font: 11px "Malgun Gothic";\n'
-            'color: rgb(172, 172, 174);\n'
-            'font-weight: bold;\n'
-            '}\n'
-            'QRadioButton::indicator:checked{\n'
-            '    background-color: rgb(172, 172, 174);\n'
-            '    border-radius: 6px;\n'
-            '    border: 2px solid rgb(165, 165, 165)\n'
-            '}\n'
-            ''
-        )
-        self.radiobutton_desktop_automation.setObjectName(
-            'radiobutton_desktop_automation'
-        )
-        self.horizontalLayout_17.addWidget(self.radiobutton_desktop_automation)
-        self.verticalLayout_21.addWidget(
-            self.frame_29, 0, QtCore.Qt.AlignHCenter
-        )
         self.label_32 = QtWidgets.QLabel(self.frame_20)
         self.label_32.setStyleSheet(
             'font: 11px "Yu Gothic UI Semilight";\n'
@@ -1155,6 +1092,7 @@ class IGBotGUI(object):
         self.verticalLayout_32.addWidget(self.label_31)
         self.horizontalLayout_16.addWidget(self.frame_35)
         self.frame_37 = QtWidgets.QFrame(self.frame_33)
+        self.frame_37.setMinimumSize(QtCore.QSize(20, 0))
         self.frame_37.setStyleSheet('border: 0px;')
         self.frame_37.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_37.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -1164,13 +1102,13 @@ class IGBotGUI(object):
         self.verticalLayout_29.setSpacing(0)
         self.verticalLayout_29.setObjectName('verticalLayout_29')
         self.pushButton_8 = QtWidgets.QPushButton(self.frame_37)
-        self.pushButton_8.setMinimumSize(QtCore.QSize(18, 18))
-        self.pushButton_8.setMaximumSize(QtCore.QSize(18, 16777215))
+        self.pushButton_8.setMinimumSize(QtCore.QSize(20, 20))
+        self.pushButton_8.setMaximumSize(QtCore.QSize(20, 16777215))
         self.pushButton_8.setCursor(
             QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         )
         self.pushButton_8.setStyleSheet(
-            'background-image: url(:/imagens/imagens/more_resized.png);'
+            'background-image: url(:/imagens/imagens/eye-resized.png);'
         )
         self.pushButton_8.setText('')
         self.pushButton_8.setObjectName('pushButton_8')
@@ -1751,15 +1689,6 @@ class IGBotGUI(object):
         self.label_22.setText(_translate('kwai_bot', 'Descansar'))
         self.label_24.setText(_translate('kwai_bot', 'min a cada'))
         self.label_23.setText(_translate('kwai_bot', 'ações'))
-        self.label_30.setText(
-            _translate('kwai_bot', 'Selecione a plataforma de automação')
-        )
-        self.radiobutton_android_automation.setText(
-            _translate('kwai_bot', 'Android')
-        )
-        self.radiobutton_desktop_automation.setText(
-            _translate('kwai_bot', 'Desktop')
-        )
         self.label_32.setText(
             _translate('kwai_bot', 'Selecione o APP de automação')
         )
@@ -1773,20 +1702,18 @@ class IGBotGUI(object):
             _translate('kwai_bot', 'Salvar configurações')
         )
         self.label_25.setText(
-            _translate('kwai_bot', 'Selecione o dispositivo:')
+            _translate('kwai_bot', 'Dispositivos conectados:')
         )
         self.combobox_connected_devices.setItemText(
             0, _translate('kwai_bot', 'Nenhum dispositivo conectado')
         )
-        self.label_26.setText(_translate('kwai_bot', 'Usuário'))
-        self.label_27.setText(_translate('kwai_bot', 'Logs'))
+        self.label_26.setText(_translate('kwai_bot', 'Grupo'))
+        self.label_27.setText(_translate('kwai_bot', 'Dispositivo associado'))
         self.label_28.setText(_translate('kwai_bot', 'Ações'))
-        self.label_29.setText(_translate('kwai_bot', '@willenrocha1'))
-        self.label_31.setText(
-            _translate('kwai_bot', 'Ação realizada com sucesso!')
-        )
-        self.button_start_all.setText(_translate('kwai_bot', 'Iniciar tudo'))
-        self.button_stop_all.setText(_translate('kwai_bot', 'Parar tudo'))
+        self.label_29.setText(_translate('kwai_bot', 'android'))
+        self.label_31.setText(_translate('kwai_bot', '[ID] 192.168.0.1:5555'))
+        self.button_start_all.setText(_translate('kwai_bot', 'Iniciar todos'))
+        self.button_stop_all.setText(_translate('kwai_bot', 'Parar todos'))
         self.button_add_profiles.setText(
             _translate('kwai_bot', 'Adicionar perfis')
         )
@@ -1809,3 +1736,6 @@ class IGBotGUI(object):
         self.label_6.setText(_translate('kwai_bot', 'Ações'))
         self.label_7.setText(_translate('kwai_bot', '#12345'))
         self.label_8.setText(_translate('kwai_bot', '#56789'))
+
+
+from src.gui.resources import imagens_rc

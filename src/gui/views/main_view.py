@@ -1,35 +1,37 @@
+import time
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
 from src.gui.constants import OptionsKeys
 from src.gui.controllers.config_controller import ConfigController
 from src.gui.controllers.devices_controller import DevicesController
-from src.gui.controllers.profiles_controller import ProfilesController
+from src.gui.controllers.groups_controller import GroupsController
 from src.gui.controllers.start_controller import StartController
 from src.gui.resources.main_view_rc import IGBotGUI
 from src.gui.views.add_profiles_view import AddProfilesView
 from src.gui.views.edit_profile_view import EditProfileView
-import time
+from src.gui.views.group_view import GroupView
+
 
 class MainView(IGBotGUI, QMainWindow):
     def __init__(
         self,
         config_controller: ConfigController,
         devices_controller: DevicesController,
-        profiles_controller: ProfilesController,
+        groups_controller: GroupsController,
         start_controller: StartController,
         add_profiles_view: AddProfilesView,
-        edit_profile_view: EditProfileView,
         parent=None,
     ) -> None:
         super().__init__(parent)
         self.setupUi(self)
         self.config_controller = config_controller
         self.devices_controller = devices_controller
-        self.profiles_controller = profiles_controller
+        self.group_controllers = groups_controller
         self.start_controller = start_controller
         self.add_profiles_view = add_profiles_view
-        self.edit_profile_view = edit_profile_view
+        self.group_views: dict[int, GroupView] = {}
         self.config_controller.config_changed.connect(self.set_options_at_view)
         self.config_controller.set_initial_options()
         self.button_save_config.clicked.connect(self.save_options)
@@ -38,15 +40,11 @@ class MainView(IGBotGUI, QMainWindow):
             self.remove_device_from_view
         )
         self.devices_controller.show_popup_signal.connect(self.show_popup)
+        self.group_controllers.group_added.connect(self.create_group_frame)
+        self.group_controllers.group_removed.connect(self.remove_group_frame)
+        self.group_controllers.show_popup_signal.connect(self.show_popup)
+        self.group_controllers.set_initial_groups()
         self.start_controller.show_popup_signal.connect(self.show_popup)
-
-        self.profiles_controller.profile_added.connect(
-            self.create_profile_frame
-        )
-        self.profiles_controller.profile_removed.connect(
-            self.remove_profile_frame
-        )
-        self.profiles_controller.profile_edited.connect(self.edit_profile_frame)
 
         self.button_change_to_wifi.clicked.connect(
             lambda: self.devices_controller.change_devices_connection_to_wifi(
@@ -59,12 +57,10 @@ class MainView(IGBotGUI, QMainWindow):
             )
         )
         self.button_add_profiles.clicked.connect(self.add_profiles_view.show)
-
-        self.profiles_controller.add_initial_profiles()
         self.devices_controller.watch_devices()
 
         self.start_worker = StartWorker(self.start_controller)
-    
+
         self.set_page_events()
         self.set_widgets_events()
         self.frame_4.hide()
@@ -90,9 +86,6 @@ class MainView(IGBotGUI, QMainWindow):
             self.update_widtgets_visibility
         )
         self.radiobutton_enable_rest_goal.toggled.connect(
-            self.update_widtgets_visibility
-        )
-        self.radiobutton_android_automation.toggled.connect(
             self.update_widtgets_visibility
         )
 
@@ -125,9 +118,6 @@ class MainView(IGBotGUI, QMainWindow):
             options[OptionsKeys.REST_GOAL_ACTIONS]
         )
         self.set_rest_goal_time_value(options[OptionsKeys.REST_GOAL_TIME])
-        self.set_automation_platform_value(
-            options[OptionsKeys.AUTOMATION_PLATFORM]
-        )
         self.set_automation_app_value(options[OptionsKeys.AUTOMATION_APP])
 
     def save_options(self) -> None:
@@ -150,13 +140,6 @@ class MainView(IGBotGUI, QMainWindow):
         else:
             self.frame_rest_goal.hide()
 
-        if self.radiobutton_android_automation.isChecked():
-            self.label_32.show()
-            self.frame_36.show()
-        else:
-            self.label_32.hide()
-            self.frame_36.hide()
-
     def get_options_object(self) -> dict:
         return {
             OptionsKeys.TIME_BETWEEN_ACTIONS_MIN: self.get_time_between_actions_min_value(),
@@ -171,7 +154,6 @@ class MainView(IGBotGUI, QMainWindow):
             OptionsKeys.ENABLE_REST_GOAL: self.get_enable_rest_goal_value(),
             OptionsKeys.REST_GOAL_ACTIONS: self.get_rest_goal_actions_value(),
             OptionsKeys.REST_GOAL_TIME: self.get_rest_goal_time_value(),
-            OptionsKeys.AUTOMATION_PLATFORM: self.get_automation_platform_value(),
             OptionsKeys.AUTOMATION_APP: self.get_automation_app_value(),
         }
 
@@ -221,10 +203,6 @@ class MainView(IGBotGUI, QMainWindow):
     def set_rest_goal_time_value(self, value: int) -> None:
         self.spinbox_minutes_rest.setValue(value)
 
-    def set_automation_platform_value(self, value: str) -> None:
-        self.radiobutton_android_automation.setChecked(value == 'android')
-        self.radiobutton_desktop_automation.setChecked(value == 'desktop')
-
     def set_automation_app_value(self, value: str) -> None:
         self.radiobutton_lite_instagram.setChecked(value == 'lite_instagram')
         self.radiobutton_official_instagram.setChecked(
@@ -266,13 +244,6 @@ class MainView(IGBotGUI, QMainWindow):
 
     def get_rest_goal_time_value(self) -> int:
         return self.spinbox_minutes_rest.value()
-
-    def get_automation_platform_value(self) -> str:
-        return (
-            'android'
-            if self.radiobutton_android_automation.isChecked()
-            else 'desktop'
-        )
 
     def get_automation_app_value(self) -> str:
         return (
@@ -554,121 +525,129 @@ class MainView(IGBotGUI, QMainWindow):
         frame_device.setParent(None)
         frame_device.deleteLater()
 
-    def create_profile_frame(self, profile_info: dict) -> None:
+    def create_group_frame(self, group_info: dict) -> None:
 
-        username = profile_info['username']
+        group_index = group_info['index']
 
-        main_frame = QtWidgets.QFrame(self.frame_32)
-        main_frame.setMinimumSize(QtCore.QSize(0, 40))
-        main_frame.setStyleSheet('')
-        main_frame.setFrameShape(QtWidgets.QFrame.NoFrame)
-        main_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        main_frame.setObjectName('frame_profile_' + username)
+        frame_group = QtWidgets.QFrame(self.frame_32)
+        frame_group.setMinimumSize(QtCore.QSize(0, 40))
+        frame_group.setStyleSheet('')
+        frame_group.setFrameShape(QtWidgets.QFrame.NoFrame)
+        frame_group.setFrameShadow(QtWidgets.QFrame.Raised)
+        frame_group.setObjectName('frame_group_' + str(group_index))
 
-        horizontal_layout = QtWidgets.QHBoxLayout(main_frame)
+        horizontal_layout = QtWidgets.QHBoxLayout(frame_group)
         horizontal_layout.setContentsMargins(0, 0, 0, 0)
         horizontal_layout.setSpacing(0)
-        horizontal_layout.setObjectName('horizontalLayout_' + username)
+        horizontal_layout.setObjectName('horizontalLayout_' + str(group_index))
 
-        frame_profile_username = QtWidgets.QFrame(main_frame)
-        frame_profile_username.setMaximumSize(QtCore.QSize(150, 16777215))
-        frame_profile_username.setStyleSheet('')
-        frame_profile_username.setFrameShape(QtWidgets.QFrame.NoFrame)
-        frame_profile_username.setFrameShadow(QtWidgets.QFrame.Raised)
-        frame_profile_username.setObjectName(
-            'frame_profile_username_' + username
-        )
+        frame_group_name = QtWidgets.QFrame(frame_group)
+        frame_group_name.setMaximumSize(QtCore.QSize(150, 16777215))
+        frame_group_name.setStyleSheet('')
+        frame_group_name.setFrameShape(QtWidgets.QFrame.NoFrame)
+        frame_group_name.setFrameShadow(QtWidgets.QFrame.Raised)
+        frame_group_name.setObjectName('frame_group_name_' + str(group_index))
 
-        vertical_layout = QtWidgets.QVBoxLayout(frame_profile_username)
-        vertical_layout.setObjectName('verticalLayout_' + username)
+        vertical_layout = QtWidgets.QVBoxLayout(frame_group_name)
+        vertical_layout.setObjectName('verticalLayout_' + str(group_index))
 
-        label_profile_username = QtWidgets.QLabel(frame_profile_username)
-        label_profile_username.setStyleSheet(
+        label_group_name = QtWidgets.QLabel(frame_group_name)
+        label_group_name.setStyleSheet(
             'font: 8pt "Yu Gothic UI Semilight";\n'
             'color: rgb(230, 230, 230);\n'
             'font-weight:bold;'
         )
-        label_profile_username.setAlignment(QtCore.Qt.AlignCenter)
-        label_profile_username.setObjectName(
-            'label_profile_username_' + username
+        label_group_name.setAlignment(QtCore.Qt.AlignCenter)
+        label_group_name.setObjectName('label_group_name_' + str(group_index))
+
+        vertical_layout.addWidget(label_group_name)
+        horizontal_layout.addWidget(frame_group_name)
+
+        frame_group_device = QtWidgets.QFrame(frame_group)
+        frame_group_device.setMinimumSize(QtCore.QSize(236, 0))
+        frame_group_device.setMaximumSize(QtCore.QSize(236, 16777215))
+        frame_group_device.setStyleSheet('')
+        frame_group_device.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        frame_group_device.setFrameShadow(QtWidgets.QFrame.Raised)
+        frame_group_device.setObjectName(
+            'frame_group_device_' + str(group_index)
         )
 
-        label_profile_username.setText('@' + username)
-        vertical_layout.addWidget(label_profile_username)
-        horizontal_layout.addWidget(frame_profile_username)
+        vertical_layout2 = QtWidgets.QVBoxLayout(frame_group_device)
+        vertical_layout2.setObjectName('verticalLayout2_' + str(group_index))
 
-        frame_profile_log = QtWidgets.QFrame(main_frame)
-        frame_profile_log.setMinimumSize(QtCore.QSize(236, 0))
-        frame_profile_log.setMaximumSize(QtCore.QSize(236, 16777215))
-        frame_profile_log.setStyleSheet('')
-        frame_profile_log.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        frame_profile_log.setFrameShadow(QtWidgets.QFrame.Raised)
-        frame_profile_log.setObjectName('frame_profile_log_' + username)
-
-        vertical_layout_2 = QtWidgets.QVBoxLayout(frame_profile_log)
-        vertical_layout_2.setObjectName('verticalLayout2_' + username)
-
-        label_profile_log = QtWidgets.QLabel(frame_profile_log)
-        label_profile_log.setStyleSheet(
+        label_group_device = QtWidgets.QLabel(frame_group_device)
+        label_group_device.setStyleSheet(
             'font: 8pt "Yu Gothic UI Semilight";\n'
             'color: rgb(230, 230, 230);\n'
-            'font-weight: bold;'
+            'font-weight:bold;'
         )
-        label_profile_log.setAlignment(QtCore.Qt.AlignCenter)
-        label_profile_log.setObjectName('label_profile_log_' + username)
-
-        label_profile_log.setText(profile_info['current_log'])
-        vertical_layout_2.addWidget(label_profile_log)
-        horizontal_layout.addWidget(frame_profile_log)
-
-        frame_profile_actions = QtWidgets.QFrame(main_frame)
-        frame_profile_actions.setStyleSheet('border: 0px;')
-        frame_profile_actions.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        frame_profile_actions.setFrameShadow(QtWidgets.QFrame.Raised)
-        frame_profile_actions.setObjectName(
-            'frame_profile_actions_' + username
+        label_group_device.setAlignment(QtCore.Qt.AlignCenter)
+        label_group_device.setObjectName(
+            'label_group_device_' + str(group_index)
         )
 
-        vertical_layout_3 = QtWidgets.QVBoxLayout(frame_profile_actions)
-        vertical_layout_3.setContentsMargins(0, 0, 0, 0)
-        vertical_layout_3.setSpacing(0)
-        vertical_layout_3.setObjectName('verticalLayout3_' + username)
+        vertical_layout2.addWidget(label_group_device)
+        horizontal_layout.addWidget(frame_group_device)
 
-        button_profile_actions = QtWidgets.QPushButton(frame_profile_actions)
-        button_profile_actions.setMinimumSize(QtCore.QSize(18, 18))
-        button_profile_actions.setMaximumSize(QtCore.QSize(18, 16777215))
-        button_profile_actions.setCursor(
+        frame_group_actions = QtWidgets.QFrame(frame_group)
+        frame_group_actions.setMinimumSize(QtCore.QSize(20, 0))
+        frame_group_actions.setStyleSheet('border: 0px;')
+        frame_group_actions.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        frame_group_actions.setFrameShadow(QtWidgets.QFrame.Raised)
+        frame_group_actions.setObjectName(
+            'frame_group_actions_' + str(group_index)
+        )
+
+        vertical_layout3 = QtWidgets.QVBoxLayout(frame_group_actions)
+        vertical_layout3.setContentsMargins(0, 0, 0, 0)
+        vertical_layout3.setSpacing(0)
+        vertical_layout3.setObjectName('verticalLayout3_' + str(group_index))
+
+        button_open_group = QtWidgets.QPushButton(frame_group_actions)
+        button_open_group.setMinimumSize(QtCore.QSize(20, 20))
+        button_open_group.setMaximumSize(QtCore.QSize(20, 16777215))
+        button_open_group.setCursor(
             QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         )
-        button_profile_actions.setStyleSheet(
-            'background-image: url(:/imagens/imagens/more_resized.png);'
+        button_open_group.setStyleSheet(
+            'background-image: url(:/imagens/imagens/eye-resized.png);'
         )
-        button_profile_actions.setText('')
-        button_profile_actions.setObjectName(
-            'button_profile_actions_' + username
+        button_open_group.setText('')
+        button_open_group.setObjectName(
+            'button_open_group_' + str(group_index)
         )
+        button_open_group.clicked.connect(lambda: self.open_group(group_index))
 
-        menu = QtWidgets.QMenu()
-        menu.addAction('Iniciar', lambda: self.start_bot(profile_info))
-        menu.addAction(
-            'Ver informações', lambda: self.view_profile_info(profile_info)
+        vertical_layout3.addWidget(
+            button_open_group, 0, QtCore.Qt.AlignHCenter
         )
-        menu.addAction(
-            'Remover perfil',
-            lambda: self.profiles_controller.remove_profile(username),
-        )
-        menu.addAction(
-            'Editar perfil',
-            lambda: self.edit_profile_view.setup_view(profile_info),
-        )
+        horizontal_layout.addWidget(frame_group_actions)
 
-        button_profile_actions.setMenu(menu)
+        label_group_name.setText(group_info['group_name'])
+        label_group_device.setText(group_info['device_id'])
 
-        vertical_layout_3.addWidget(button_profile_actions)
-        horizontal_layout.addWidget(
-            frame_profile_actions, 0, QtCore.Qt.AlignHCenter
+        self.verticalLayout_26.addWidget(frame_group)
+
+    def remove_group_frame(self, group_index: int) -> None:
+        frame_group = self.findChild(
+            QtWidgets.QFrame, 'frame_group_' + str(group_index)
         )
-        self.verticalLayout_26.addWidget(main_frame)
+        frame_group.setParent(None)
+        frame_group.deleteLater()
+
+    def open_group(self, group_index: int) -> None:
+
+        if group_index in self.group_views.keys():
+            self.group_views[group_index].show()
+            return
+
+        edit_profile_view = EditProfileView(self.group_controllers)
+        group = GroupView(
+            edit_profile_view, self.group_controllers, group_index
+        )
+        self.group_views[group_index] = group
+        group.show()
 
     def start_bot(self, profile_info: dict) -> None:
         current_device = self.combobox_connected_devices.currentText()
@@ -682,42 +661,9 @@ class MainView(IGBotGUI, QMainWindow):
         self.start_worker.device_id = device_id
         self.start_worker.start()
 
-    def remove_profile_frame(self, profile_username: str) -> None:
-        frame_profile = self.findChild(
-            QtWidgets.QFrame, 'frame_profile_' + profile_username
-        )
-        frame_profile.setParent(None)
-        frame_profile.deleteLater()
-    
-    def edit_profile_frame(self, profile_info: dict) -> None:
-        username = profile_info['username']
-        log = profile_info['current_log']
-
-        label_profile_username = self.findChild(
-            QtWidgets.QLabel, 'label_profile_username_' + username
-        )
-        label_profile_username.setText('@' + username)
-
-        label_profile_log = self.findChild(
-            QtWidgets.QLabel, 'label_profile_log_' + username
-        )
-        label_profile_log.setText(log)
-
-    def view_profile_info(self, profile_info: dict) -> None:
-        text = f"""
-        Usuário: {profile_info['username']}
-        Senha: {profile_info['password']}
-        Gênero: {profile_info['gender']}
-        Ações de curtir realizadas: {profile_info['like_actions_done']}
-        Ações de seguir realizadas: {profile_info['follow_actions_done']}
-        Ações de comentar realizadas: {profile_info['comment_actions_done']}          
-        Status: {profile_info['status']}
-        """
-        self.show_popup('Informações do perfil', text)
-
 
 class StartWorker(QtCore.QThread):
-    
+
     finished = QtCore.pyqtSignal()
 
     def __init__(self, start_controller: StartController) -> None:
@@ -730,7 +676,3 @@ class StartWorker(QtCore.QThread):
         while not self.profile_info:
             time.sleep(1)
         self.start_controller.start_bot(self.profile_info, self.device_id)
-        
-
-        
-        

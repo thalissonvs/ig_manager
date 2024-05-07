@@ -1,4 +1,4 @@
-class ProfilesService:
+class ProfilesFormatterService:
     @staticmethod
     def format_profiles_text(profiles_text: str) -> list[dict]:
         profiles = []

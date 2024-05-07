@@ -21,7 +21,6 @@ class ConfigModel(QObject):
         self._enable_rest_goal = False
         self._rest_goal_actions = 0
         self._rest_goal_time = 0
-        self._automation_platform = None
         self._automation_app = None
 
     def get_config(self) -> Dict[str, Any]:
@@ -38,7 +37,6 @@ class ConfigModel(QObject):
             'enable_rest_goal': self.enable_rest_goal,
             'rest_goal_actions': self.rest_goal_actions,
             'rest_goal_time': self.rest_goal_time,
-            'automation_platform': self.automation_platform,
             'automation_app': self.automation_app,
         }
 
@@ -148,15 +146,6 @@ class ConfigModel(QObject):
     @rest_goal_time.setter
     def rest_goal_time(self, value: int) -> None:
         self._rest_goal_time = value
-        self.config_changed.emit(self.get_config())
-
-    @property
-    def automation_platform(self) -> str:
-        return self._automation_platform
-
-    @automation_platform.setter
-    def automation_platform(self, value: str) -> None:
-        self._automation_platform = value
         self.config_changed.emit(self.get_config())
 
     @property

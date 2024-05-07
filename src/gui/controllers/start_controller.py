@@ -3,7 +3,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from src.bot.start_facade import StartBotFacade
 from src.gui.models.config_model import ConfigModel
 from src.gui.models.devices_model import DevicesModel
-from src.gui.models.profiles_model import ProfilesModel
+from src.gui.models.groups_model import GroupsModel
 
 
 class StartController(QObject):
@@ -13,13 +13,13 @@ class StartController(QObject):
     def __init__(
         self,
         devices_model: DevicesModel,
-        profiles_model: ProfilesModel,
+        groups_model: GroupsModel,
         config_model: ConfigModel,
         bot_facade: StartBotFacade,
     ) -> None:
         super().__init__()
         self._devices_model = devices_model
-        self._profiles_model = profiles_model
+        self._groups_model = groups_model
         self._config_model = config_model
         self._bot_facade = bot_facade
 
@@ -36,7 +36,7 @@ class StartController(QObject):
         try:
             self._bot_facade.start(
                 self._devices_model,
-                self._profiles_model,
+                self._groups_model,
                 self._config_model,
                 profile_info,
                 device_id,

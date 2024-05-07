@@ -28,7 +28,7 @@ class OfficialInstagramSelectors(ISelectors):
             'text': 'Entrar',
             'description': 'Entrar',
         }
-    
+
     @property
     def LOGIN_VERIFIER(self) -> dict:
         return {

@@ -46,7 +46,9 @@ class DevicesController(QObject):
                 connection_type,
             )
 
-    def _is_device_already_in_model(self, device_id: str) -> bool:
+    def _is_device_already_in_model(
+        self, device_id: str
+    ) -> bool:   # TODO:  mover para o model
         return device_id in self._devices_model.get_devices().keys()
 
     def _remove_devices_from_model(self) -> None:

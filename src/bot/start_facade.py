@@ -2,7 +2,7 @@ from src.automators.android_automator import AndroidAutomator
 from src.bot.bot import Bot
 from src.gui.models.config_model import ConfigModel
 from src.gui.models.devices_model import DevicesModel
-from src.gui.models.profiles_model import ProfilesModel
+from src.gui.models.groups_model import GroupsModel
 from src.managers.instagram_manager import InstagramManager
 from src.selectors.selectors_factory import SelectorsFactory
 
@@ -17,11 +17,11 @@ class StartBotFacade:
     def start(
         self,
         devices_model: DevicesModel,
-        profiles_model: ProfilesModel,
+        groups_model: GroupsModel,
         config_model: ConfigModel,
-        profile_info: dict,
-        device_id: str = None,
+        group_info: dict,
     ) -> None:
+        device_id = group_info.get('device_id')
         device_info = (
             devices_model.get_device(device_id) if device_id else None
         )
@@ -29,9 +29,7 @@ class StartBotFacade:
 
         automator = AndroidAutomator(device_info, automation_app)
 
-        selectors = self.selectors_factory.create_selectors(
-            automation_app
-        )
+        selectors = self.selectors_factory.create_selectors(automation_app)
         instagram_manager = InstagramManager(automator, selectors)
-        instagram_bot = Bot(instagram_manager, profiles_model, config_model)
-        return instagram_bot.start(profile_info)
+        instagram_bot = Bot(instagram_manager, groups_model, config_model)
+        return instagram_bot.start(group_info)

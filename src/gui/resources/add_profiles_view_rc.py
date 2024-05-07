@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class AddProfilesGUI(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName('MainWindow')
-        MainWindow.resize(442, 383)
+        MainWindow.resize(442, 477)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName('centralwidget')
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -38,7 +38,16 @@ class AddProfilesGUI(object):
         self.label_25.setAlignment(QtCore.Qt.AlignCenter)
         self.label_25.setObjectName('label_25')
         self.verticalLayout_2.addWidget(self.label_25)
-        self.frame_21 = QtWidgets.QFrame(self.main_frame)
+        self.frame = QtWidgets.QFrame(self.main_frame)
+        self.frame.setMinimumSize(QtCore.QSize(0, 0))
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setObjectName('frame')
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.frame)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setSpacing(6)
+        self.verticalLayout.setObjectName('verticalLayout')
+        self.frame_21 = QtWidgets.QFrame(self.frame)
         self.frame_21.setMinimumSize(QtCore.QSize(0, 25))
         self.frame_21.setMaximumSize(QtCore.QSize(16777215, 25))
         self.frame_21.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -48,8 +57,8 @@ class AddProfilesGUI(object):
         self.horizontalLayout_13.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_13.setSpacing(8)
         self.horizontalLayout_13.setObjectName('horizontalLayout_13')
-        self.radiobutton_change_actions = QtWidgets.QRadioButton(self.frame_21)
-        self.radiobutton_change_actions.setStyleSheet(
+        self.radiobutton_single_profile = QtWidgets.QRadioButton(self.frame_21)
+        self.radiobutton_single_profile.setStyleSheet(
             'QRadioButton{\n'
             'font: 11px "Malgun Gothic";\n'
             'color: rgb(172, 172, 174);\n'
@@ -64,14 +73,14 @@ class AddProfilesGUI(object):
             '\n'
             ''
         )
-        self.radiobutton_change_actions.setObjectName(
-            'radiobutton_change_actions'
+        self.radiobutton_single_profile.setObjectName(
+            'radiobutton_single_profile'
         )
-        self.horizontalLayout_13.addWidget(self.radiobutton_change_actions)
-        self.radiobutton_dont_change_actions = QtWidgets.QRadioButton(
+        self.horizontalLayout_13.addWidget(self.radiobutton_single_profile)
+        self.radiobutton_multiple_profiles = QtWidgets.QRadioButton(
             self.frame_21
         )
-        self.radiobutton_dont_change_actions.setStyleSheet(
+        self.radiobutton_multiple_profiles.setStyleSheet(
             'QRadioButton{\n'
             'font: 11px "Malgun Gothic";\n'
             'color: rgb(172, 172, 174);\n'
@@ -84,24 +93,105 @@ class AddProfilesGUI(object):
             '}\n'
             ''
         )
-        self.radiobutton_dont_change_actions.setObjectName(
-            'radiobutton_dont_change_actions'
+        self.radiobutton_multiple_profiles.setObjectName(
+            'radiobutton_multiple_profiles'
         )
-        self.horizontalLayout_13.addWidget(
-            self.radiobutton_dont_change_actions
+        self.horizontalLayout_13.addWidget(self.radiobutton_multiple_profiles)
+        self.verticalLayout.addWidget(self.frame_21, 0, QtCore.Qt.AlignHCenter)
+        self.frame_groups = QtWidgets.QFrame(self.frame)
+        self.frame_groups.setMinimumSize(QtCore.QSize(0, 30))
+        self.frame_groups.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.frame_groups.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame_groups.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_groups.setObjectName('frame_groups')
+        self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.frame_groups)
+        self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_8.setSpacing(0)
+        self.verticalLayout_8.setObjectName('verticalLayout_8')
+        self.combobox_groups = QtWidgets.QComboBox(self.frame_groups)
+        self.combobox_groups.setMinimumSize(QtCore.QSize(300, 30))
+        self.combobox_groups.setStyleSheet(
+            'QComboBox{\n'
+            'border: 1px solid rgb(70, 70, 82);\n'
+            'color: rgb(172, 172, 174);\n'
+            'border-top-left-radius: 5px;\n'
+            'border-bottom-left-radius: 5px;\n'
+            'font: 75 11px "Myanmar Text";\n'
+            'font-weight: bold;\n'
+            'padding-left: 5px;\n'
+            'padding-right: 7px;\n'
+            '}\n'
+            '\n'
+            'QComboBox:focus{\n'
+            'border: 1px outset rgb(70, 70, 82);\n'
+            '}\n'
+            '\n'
+            'QComboBox::drop-down {\n'
+            '    background-color: rgb(39, 39, 47);\n'
+            '    width: 25px; \n'
+            '    border-right: 0px;\n'
+            '}\n'
+            '\n'
+            'QComboBox::down-arrow {\n'
+            '    image: url(:/imagens/imagens/dropdown.png);\n'
+            '}\n'
+            '\n'
+            ''
         )
-        self.verticalLayout_2.addWidget(
-            self.frame_21, 0, QtCore.Qt.AlignHCenter
+        self.combobox_groups.setObjectName('combobox_groups')
+        self.combobox_groups.addItem('')
+        self.verticalLayout_8.addWidget(self.combobox_groups)
+        self.verticalLayout.addWidget(self.frame_groups, 0, QtCore.Qt.AlignTop)
+        self.frame_group_name = QtWidgets.QFrame(self.frame)
+        self.frame_group_name.setMinimumSize(QtCore.QSize(0, 30))
+        self.frame_group_name.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.frame_group_name.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame_group_name.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_group_name.setObjectName('frame_group_name')
+        self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.frame_group_name)
+        self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_9.setSpacing(0)
+        self.verticalLayout_9.setObjectName('verticalLayout_9')
+        self.lineedit_group_name = QtWidgets.QLineEdit(self.frame_group_name)
+        self.lineedit_group_name.setMinimumSize(QtCore.QSize(300, 30))
+        self.lineedit_group_name.setStyleSheet(
+            'border: 1px solid rgb(70, 70, 82);\n'
+            'border-radius: 5px;\n'
+            'padding-left: 5px;\n'
+            'font: 8pt "Yu Gothic UI Semilight";\n'
+            'color: rgb(230, 230, 230);'
         )
-        self.frame = QtWidgets.QFrame(self.main_frame)
-        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame.setObjectName('frame')
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.frame)
-        self.verticalLayout.setObjectName('verticalLayout')
+        self.lineedit_group_name.setObjectName('lineedit_group_name')
+        self.verticalLayout_9.addWidget(self.lineedit_group_name)
+        self.verticalLayout.addWidget(self.frame_group_name)
+        self.frame_device_id = QtWidgets.QFrame(self.frame)
+        self.frame_device_id.setMinimumSize(QtCore.QSize(0, 30))
+        self.frame_device_id.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.frame_device_id.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame_device_id.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_device_id.setObjectName('frame_device_id')
+        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.frame_device_id)
+        self.verticalLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_10.setSpacing(0)
+        self.verticalLayout_10.setObjectName('verticalLayout_10')
+        self.lineedit_device_id = QtWidgets.QLineEdit(self.frame_device_id)
+        self.lineedit_device_id.setMinimumSize(QtCore.QSize(300, 30))
+        self.lineedit_device_id.setStyleSheet(
+            'border: 1px solid rgb(70, 70, 82);\n'
+            'border-radius: 5px;\n'
+            'padding-left: 5px;\n'
+            'font: 8pt "Yu Gothic UI Semilight";\n'
+            'color: rgb(230, 230, 230);'
+        )
+        self.lineedit_device_id.setObjectName('lineedit_device_id')
+        self.verticalLayout_10.addWidget(self.lineedit_device_id)
+        self.verticalLayout.addWidget(
+            self.frame_device_id, 0, QtCore.Qt.AlignTop
+        )
         self.frame_username = QtWidgets.QFrame(self.frame)
         self.frame_username.setMinimumSize(QtCore.QSize(0, 30))
-        self.frame_username.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_username.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.frame_username.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_username.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_username.setObjectName('frame_username')
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.frame_username)
@@ -119,10 +209,13 @@ class AddProfilesGUI(object):
         )
         self.lineedit_username.setObjectName('lineedit_username')
         self.verticalLayout_3.addWidget(self.lineedit_username)
-        self.verticalLayout.addWidget(self.frame_username)
+        self.verticalLayout.addWidget(
+            self.frame_username, 0, QtCore.Qt.AlignTop
+        )
         self.frame_password = QtWidgets.QFrame(self.frame)
         self.frame_password.setMinimumSize(QtCore.QSize(0, 30))
-        self.frame_password.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_password.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.frame_password.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_password.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_password.setObjectName('frame_password')
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.frame_password)
@@ -143,7 +236,8 @@ class AddProfilesGUI(object):
         self.verticalLayout.addWidget(self.frame_password)
         self.frame_gender = QtWidgets.QFrame(self.frame)
         self.frame_gender.setMinimumSize(QtCore.QSize(0, 30))
-        self.frame_gender.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_gender.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.frame_gender.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_gender.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_gender.setObjectName('frame_gender')
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.frame_gender)
@@ -184,14 +278,14 @@ class AddProfilesGUI(object):
         self.combobox_gender.addItem('')
         self.combobox_gender.addItem('')
         self.verticalLayout_5.addWidget(self.combobox_gender)
-        self.verticalLayout.addWidget(self.frame_gender)
+        self.verticalLayout.addWidget(self.frame_gender, 0, QtCore.Qt.AlignTop)
         self.frame_profiles = QtWidgets.QFrame(self.frame)
         self.frame_profiles.setMinimumSize(QtCore.QSize(0, 120))
         self.frame_profiles.setMaximumSize(QtCore.QSize(16777215, 120))
         self.frame_profiles.setStyleSheet(
             'border: 1px solid rgb(70, 70, 82);\n' 'border-radius: 5px;'
         )
-        self.frame_profiles.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_profiles.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_profiles.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_profiles.setObjectName('frame_profiles')
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.frame_profiles)
@@ -212,7 +306,8 @@ class AddProfilesGUI(object):
         self.verticalLayout.addWidget(self.frame_profiles)
         self.frame_2 = QtWidgets.QFrame(self.frame)
         self.frame_2.setMinimumSize(QtCore.QSize(0, 40))
-        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_2.setMaximumSize(QtCore.QSize(16777215, 40))
+        self.frame_2.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName('frame_2')
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.frame_2)
@@ -255,7 +350,7 @@ class AddProfilesGUI(object):
         )
         self.button_add_profiles.setObjectName('button_add_profiles')
         self.verticalLayout_7.addWidget(self.button_add_profiles)
-        self.verticalLayout.addWidget(self.frame_2)
+        self.verticalLayout.addWidget(self.frame_2, 0, QtCore.Qt.AlignTop)
         self.verticalLayout_2.addWidget(
             self.frame, 0, QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter
         )
@@ -269,11 +364,23 @@ class AddProfilesGUI(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate('MainWindow', 'MainWindow'))
         self.label_25.setText(_translate('MainWindow', 'Adicionar perfis'))
-        self.radiobutton_change_actions.setText(
+        self.radiobutton_single_profile.setText(
             _translate('MainWindow', 'Individuais')
         )
-        self.radiobutton_dont_change_actions.setText(
+        self.radiobutton_multiple_profiles.setText(
             _translate('MainWindow', 'Em massa')
+        )
+        self.combobox_groups.setItemText(
+            0, _translate('MainWindow', 'Criar novo grupo')
+        )
+        self.lineedit_group_name.setPlaceholderText(
+            _translate('MainWindow', 'Insira o nome do novo grupo')
+        )
+        self.lineedit_device_id.setPlaceholderText(
+            _translate(
+                'MainWindow',
+                'Insira o ID do dispositivo ao qual o grupo será associado',
+            )
         )
         self.lineedit_username.setPlaceholderText(
             _translate('MainWindow', 'Insira o usuário')

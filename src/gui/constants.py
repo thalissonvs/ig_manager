@@ -11,7 +11,6 @@ class OptionsKeys:
     ENABLE_REST_GOAL = 'enable_rest_goal'
     REST_GOAL_ACTIONS = 'rest_goal_actions'
     REST_GOAL_TIME = 'rest_goal_time'
-    AUTOMATION_PLATFORM = 'automation_platform'
     AUTOMATION_APP = 'automation_app'
 
 
@@ -28,6 +27,5 @@ DEFAULT_OPTIONS = {
     OptionsKeys.ENABLE_REST_GOAL: True,
     OptionsKeys.REST_GOAL_ACTIONS: 25,
     OptionsKeys.REST_GOAL_TIME: 60,
-    OptionsKeys.AUTOMATION_PLATFORM: 'android',
     OptionsKeys.AUTOMATION_APP: 'official_instagram',
 }
