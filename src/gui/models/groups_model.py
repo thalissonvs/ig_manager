@@ -4,23 +4,28 @@ from src.gui.models.profile_model import ProfileModel
 
 
 class GroupModel(QObject):
+
+    current_log_changed = pyqtSignal(str)
+
     def __init__(self) -> None:
         super().__init__()
         self._group_name = None
         self._device_id = None
         self._index = None
-        self.max_profiles = 5
+        self._current_log = None
         self._profiles: list[ProfileModel] = []
+        self.max_profiles = 5
 
     def get_group_info(self) -> dict:
         return {
             'group_name': self.group_name,
             'device_id': self.device_id,
             'index': self.index,
+            'current_log': self.current_log,
             'profiles': [
                 profile.get_profile_info() for profile in self.profiles
             ],
-        }
+        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
     def add_profile(
         self,
@@ -31,7 +36,6 @@ class GroupModel(QObject):
         follow_actions_done: int = 0,
         comment_actions_done: int = 0,
         status: str = 'active',
-        current_log: str = 'Aguardando início...',
     ) -> None:
 
         if len(self._profiles) >= self.max_profiles:
@@ -45,7 +49,6 @@ class GroupModel(QObject):
         profile.follow_actions_done = follow_actions_done
         profile.comment_actions_done = comment_actions_done
         profile.status = status
-        profile.current_log = current_log
         self._profiles.append(profile)
 
     @property
@@ -79,6 +82,15 @@ class GroupModel(QObject):
     @profiles.setter
     def profiles(self, value: ProfileModel) -> None:
         self._profiles = value
+    
+    @property
+    def current_log(self) -> str:
+        return self._current_log
+    
+    @current_log.setter
+    def current_log(self, value: str) -> None:
+        self._current_log = value
+        self.current_log_changed.emit(value)
 
 
 class GroupsModel(QObject):
@@ -88,6 +100,7 @@ class GroupsModel(QObject):
     profile_added = pyqtSignal(dict)
     profile_removed = pyqtSignal(str)
     profile_edited = pyqtSignal(str, dict)
+    current_log_changed = pyqtSignal(str)
 
     def __init__(self) -> None:
         super().__init__()

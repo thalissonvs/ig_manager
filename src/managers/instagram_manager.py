@@ -37,7 +37,7 @@ class InstagramManager(IManager):
 
     def verify_login(self) -> bool:
         login_verifier = self.android_automator.find_element(
-            self.selectors.LOGIN_VERIFIER
+            self.selectors.LOGIN_VERIFIER, 15
         )
         try:
             self.android_automator.wait_for_element(

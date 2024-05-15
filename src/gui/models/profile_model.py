@@ -11,7 +11,6 @@ class ProfileModel(QObject):
         self._follow_actions_done = None
         self._comment_actions_done = None
         self._status = None
-        self._current_log = None
 
     def get_profile_info(self) -> dict:
         return {
@@ -22,7 +21,6 @@ class ProfileModel(QObject):
             'follow_actions_done': self.follow_actions_done,
             'comment_actions_done': self.comment_actions_done,
             'status': self.status,
-            'current_log': self.current_log,
         }
 
     @property
@@ -81,10 +79,3 @@ class ProfileModel(QObject):
     def status(self, value: str) -> None:
         self._status = value
 
-    @property
-    def current_log(self) -> str:
-        return self._current_log
-
-    @current_log.setter
-    def current_log(self, value: str) -> None:
-        self._current_log = value

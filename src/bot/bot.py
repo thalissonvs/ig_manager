@@ -22,4 +22,9 @@ class Bot:
         self.group_model = group_model
 
     def start(self) -> None:
-        print('Bot started')
+        self.group_model.current_log = "Iniciando bot, aguarde"
+        profiles = self.group_model.profiles
+        for profile in profiles:
+            if profile.status == 'active':
+                self.manager.login(profile.username, profile.password)
+                self.group_model.current_log = "Login realizado com sucesso!"
