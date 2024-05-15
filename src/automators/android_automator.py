@@ -2,10 +2,10 @@ import uiautomator2 as u2
 
 
 class AndroidAutomator:
-    def __init__(self, device_info: dict, automation_app: str) -> None:
-        self.device_info = device_info
+    def __init__(self, device_id: int, automation_app: str) -> None:
+        self.device_id = device_id
         self.automation_app = automation_app
-        self.device_automator = u2.connect(self.device_info['device_id'])
+        self.device_automator = u2.connect(self.device_id)
 
     def prepare(self) -> int:
         packages_map = {

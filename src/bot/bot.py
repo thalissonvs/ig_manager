@@ -6,7 +6,7 @@ e adicionar na factory. Irá receber uma instância dos models para poder altera
 da aplicação e refletir na interface gráfica.
 """
 from src.gui.models.config_model import ConfigModel
-from src.gui.models.groups_model import GroupsModel
+from src.gui.models.groups_model import GroupModel
 from src.interfaces.i_manager import IManager
 
 
@@ -14,12 +14,12 @@ class Bot:
     def __init__(
         self,
         manager: IManager,
-        groups_model: GroupsModel,
+        group_model: GroupModel,
         config_model: ConfigModel,
     ) -> None:
         self.manager = manager
         self.config_model = config_model
-        self.groups_model = groups_model
+        self.group_model = group_model
 
-    def start(self, group_info: dict) -> None:
-        pass
+    def start(self) -> None:
+        print('Bot started')

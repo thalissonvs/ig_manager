@@ -29,11 +29,10 @@ if __name__ == '__main__':
     groups_repository = GroupsRepository()
     groups_controller = GroupsController(groups_model, groups_repository)
     selectors_factory = SelectorsFactory()
-    start_bot_facade = StartBotFacade(selectors_factory)
+    start_bot_facade = StartBotFacade(
+        selectors_factory, groups_model, config_model
+    )
     start_controller = StartController(
-        config_model,
-        devices_model,
-        groups_model,
         start_bot_facade,
     )
     add_profiles_view = AddProfilesView(groups_controller)

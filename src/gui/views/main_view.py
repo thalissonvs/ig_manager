@@ -59,8 +59,6 @@ class MainView(IGBotGUI, QMainWindow):
         self.button_add_profiles.clicked.connect(self.add_profiles_view.show)
         self.devices_controller.watch_devices()
 
-        self.start_worker = StartWorker(self.start_controller)
-
         self.set_page_events()
         self.set_widgets_events()
         self.frame_4.hide()
@@ -644,35 +642,10 @@ class MainView(IGBotGUI, QMainWindow):
 
         edit_profile_view = EditProfileView(self.group_controllers)
         group = GroupView(
-            edit_profile_view, self.group_controllers, group_index
+            edit_profile_view,
+            self.group_controllers,
+            self.start_controller,
+            group_index,
         )
         self.group_views[group_index] = group
         group.show()
-
-    def start_bot(self, profile_info: dict) -> None:
-        current_device = self.combobox_connected_devices.currentText()
-        device_id = (
-            None
-            if current_device == 'Nenhum dispositivo conectado'
-            else current_device.split(' ')[1]
-        )
-
-        self.start_worker.profile_info = profile_info
-        self.start_worker.device_id = device_id
-        self.start_worker.start()
-
-
-class StartWorker(QtCore.QThread):
-
-    finished = QtCore.pyqtSignal()
-
-    def __init__(self, start_controller: StartController) -> None:
-        super().__init__()
-        self.start_controller = start_controller
-        self.profile_info = None
-        self.device_id = None
-
-    def run(self) -> None:
-        while not self.profile_info:
-            time.sleep(1)
-        self.start_controller.start_bot(self.profile_info, self.device_id)

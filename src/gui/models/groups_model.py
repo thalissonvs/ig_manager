@@ -93,6 +93,9 @@ class GroupsModel(QObject):
         super().__init__()
         self._groups: list[GroupModel] = []
 
+    def get_group_model(self, group_index: int) -> GroupModel:
+        return self._groups[group_index]
+
     def get_groups(self) -> list:
         return [group.get_group_info() for group in self._groups]
 

@@ -2,8 +2,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
 from src.gui.controllers.groups_controller import GroupsController
+from src.gui.controllers.start_controller import StartController
 from src.gui.resources.group_view_rc import GroupGUI
 from src.gui.views.edit_profile_view import EditProfileView
+from src.gui.workers.start_worker import StartWorker
 
 
 class GroupView(GroupGUI, QMainWindow):
@@ -11,6 +13,7 @@ class GroupView(GroupGUI, QMainWindow):
         self,
         edit_profile_view: EditProfileView,
         groups_controller: GroupsController,
+        start_controller: StartController,
         group_index: int,
         parent=None,
     ) -> None:
@@ -18,6 +21,7 @@ class GroupView(GroupGUI, QMainWindow):
         self.setupUi(self)
         self._edit_profile_view = edit_profile_view
         self._groups_controller = groups_controller
+        self._start_controller = start_controller
         self._group_index = group_index
         self._groups_controller.profile_added.connect(
             self.create_profile_frame
@@ -29,6 +33,13 @@ class GroupView(GroupGUI, QMainWindow):
         self.label_current_log.setText('Aguardando início...')
         self.frame_33.hide()   # temporário
         self.add_initial_profiles()
+
+        self.start_worker = StartWorker(self._start_controller)
+        self.button_start_all.clicked.connect(self.start_bot)
+
+    def start_bot(self) -> None:
+        self.start_worker.group_index = self._group_index
+        self.start_worker.start()
 
     def show_popup(self, title: str, text: str) -> None:
         msg = QMessageBox()

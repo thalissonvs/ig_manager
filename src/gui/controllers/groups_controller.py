@@ -5,9 +5,8 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 from src.gui.models.groups_model import GroupsModel
 from src.gui.repository.groups_repository import GroupsRepository
-from src.gui.services.profiles_formatter_service import (
-    ProfilesFormatterService,
-)
+from src.gui.services.profiles_formatter_service import \
+    ProfilesFormatterService
 
 
 class GroupsController(QObject):
