@@ -25,7 +25,7 @@ class AddProfilesView(AddProfilesGUI, QMainWindow):
 
     def add_groups_to_combobox(self) -> None:
         self.reset_combobox_groups()
-        groups = self._groups_controller.get_groups()
+        groups = self._groups_controller.get_groups_info()
         option = 'Criar novo grupo'
         for group in groups:
             option = f"{group['index']} - {group['group_name']}"

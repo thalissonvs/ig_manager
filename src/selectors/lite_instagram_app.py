@@ -1,7 +1,7 @@
-from src.interfaces.i_selectors import ISelectors
+from src.interfaces.i_ig_selectors import IIGSelectors
 
 
-class LiteInstagramSelectors(ISelectors):
+class LiteInstagramSelectors(IIGSelectors):
     @property
     def LOGIN_BUTTON(self) -> dict:
         return {'resourceId': 'com.instagram.android:id/log_in_button'}

@@ -31,7 +31,7 @@ class EditProfileView(EditProfileGUI, QMainWindow):
         gender = (
             'M' if self.combobox_gender.currentText() == 'Masculino' else 'F'
         )
-        self._groups_controller.edit_profile_data_from_group(
+        self._groups_controller.edit_group_profile_data(
             self._group_index, self._old_username, username, password, gender
         )
         self.close()

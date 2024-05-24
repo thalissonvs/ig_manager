@@ -1,5 +1,6 @@
 from src.automators.android_automator import AndroidAutomator
 from src.bot.bot import Bot
+from src.clients.actions_client import ActionsClient
 from src.gui.models.config_model import ConfigModel
 from src.gui.models.devices_model import DevicesModel
 from src.gui.models.groups_model import GroupsModel
@@ -22,13 +23,19 @@ class StartBotFacade:
         self,
         group_index: int,
     ) -> None:
-        group_model = self.groups_model.get_group_model(group_index)
-        device_id = group_model.device_id
+        device_id = self.groups_model.get_group_info(group_index)['device_id']
         automation_app = self.config_model.automation_app
 
-        automator = AndroidAutomator(device_id, automation_app)
+        automator = AndroidAutomator(device_id)
 
         selectors = self.selectors_factory.create_selectors(automation_app)
         instagram_manager = InstagramManager(automator, selectors)
-        instagram_bot = Bot(instagram_manager, group_model, self.config_model)
+        actions_client = ActionsClient()
+        instagram_bot = Bot(
+            instagram_manager,
+            self.groups_model,
+            self.config_model,
+            actions_client,
+            group_index,
+        )
         return instagram_bot.start()

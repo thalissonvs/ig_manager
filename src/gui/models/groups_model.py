@@ -4,15 +4,13 @@ from src.gui.models.profile_model import ProfileModel
 
 
 class GroupModel(QObject):
-
-    current_log_changed = pyqtSignal(str)
-
     def __init__(self) -> None:
         super().__init__()
         self._group_name = None
         self._device_id = None
         self._index = None
         self._current_log = None
+        self._current_account = None
         self._profiles: list[ProfileModel] = []
         self.max_profiles = 5
 
@@ -25,7 +23,7 @@ class GroupModel(QObject):
             'profiles': [
                 profile.get_profile_info() for profile in self.profiles
             ],
-        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        }
 
     def add_profile(
         self,
@@ -41,6 +39,9 @@ class GroupModel(QObject):
         if len(self._profiles) >= self.max_profiles:
             raise Exception('Max profiles reached')
 
+        if self._is_profile_username_in_use(username):
+            raise Exception('Username already in use')
+
         profile = ProfileModel()
         profile.username = username
         profile.password = password
@@ -50,6 +51,20 @@ class GroupModel(QObject):
         profile.comment_actions_done = comment_actions_done
         profile.status = status
         self._profiles.append(profile)
+
+    def _is_profile_username_in_use(self, username: str) -> bool:
+        for profile in self._profiles:
+            if profile.username == username:
+                return True
+        return False
+
+    @property
+    def current_account(self) -> str:
+        return self._current_account
+
+    @current_account.setter
+    def current_account(self, value: str) -> None:
+        self._current_account = value
 
     @property
     def group_name(self) -> str:
@@ -82,40 +97,45 @@ class GroupModel(QObject):
     @profiles.setter
     def profiles(self, value: ProfileModel) -> None:
         self._profiles = value
-    
+
     @property
     def current_log(self) -> str:
         return self._current_log
-    
+
     @current_log.setter
     def current_log(self, value: str) -> None:
         self._current_log = value
-        self.current_log_changed.emit(value)
 
 
 class GroupsModel(QObject):
 
     group_added = pyqtSignal(dict)
     group_removed = pyqtSignal(int)
+    group_edited = pyqtSignal(dict)
+
     profile_added = pyqtSignal(dict)
     profile_removed = pyqtSignal(str)
     profile_edited = pyqtSignal(str, dict)
-    current_log_changed = pyqtSignal(str)
+
+    current_account_changed = pyqtSignal(int, str)   # group_index, username
 
     def __init__(self) -> None:
         super().__init__()
+        self._current_account = None
         self._groups: list[GroupModel] = []
 
-    def get_group_model(self, group_index: int) -> GroupModel:
-        return self._groups[group_index]
-
-    def get_groups(self) -> list:
-        return [group.get_group_info() for group in self._groups]
-
-    def get_group(self, group_index: int) -> dict:
+    def get_group_info(self, group_index: int) -> dict:
         return self._groups[group_index].get_group_info()
 
+    def get_groups_info(self) -> list:
+        return [group.get_group_info() for group in self._groups]
+
     def create_group(self, group_name: str, device_id: str) -> None:
+        if self._is_device_id_in_use(device_id):
+            raise Exception('Device ID already in use')
+        if self._is_group_name_in_use(group_name):
+            raise Exception('Group name already in use')
+
         group = GroupModel()
         group.group_name = group_name
         group.device_id = device_id
@@ -123,20 +143,12 @@ class GroupsModel(QObject):
         self._groups.append(group)
         self.group_added.emit(group.get_group_info())
 
-    def add_profile_to_group(
-        self, group_index: int, username: str, password: str, gender: str
+    def set_group_current_account(
+        self, group_index: int, username: str
     ) -> None:
         group = self._groups[group_index]
-        group.add_profile(username, password, gender)
-        self.profile_added.emit(group.profiles[-1].get_profile_info())
-
-    def remove_profile_from_group(
-        self, group_index: int, profile_username: str
-    ) -> None:
-        group = self._groups[group_index]
-        profile = self._get_profile_model(group_index, profile_username)
-        group.profiles.remove(profile)
-        self.profile_removed.emit(profile_username)
+        group.current_account = username
+        self.current_account_changed.emit(group_index, username)
 
     def remove_group(self, group_index: int) -> None:
         self._groups.pop(group_index)
@@ -148,12 +160,36 @@ class GroupsModel(QObject):
         group = self._groups[group_index]
         group.group_name = new_name
         group.device_id = device_id
-        self.group_added.emit(group.get_group_info())
+        self.group_edited.emit(group.get_group_info())
 
-    def get_profiles_list_info_from_group(self, group_index: int) -> list:
-        return self._groups[group_index].profiles
+    def edit_group_current_log(
+        self, group_index: int, current_log: str
+    ) -> None:
+        group = self._groups[group_index]
+        group.current_log = current_log
+        self.group_edited.emit(group.get_group_info())
 
-    def get_profile_info_from_group(
+    def add_profile_to_group(
+        self, group_index: int, username: str, password: str, gender: str
+    ) -> None:
+        group = self._groups[group_index]
+        group.add_profile(username, password, gender)
+
+        if group.current_account is None:
+            group.current_account = username
+            self.current_account_changed.emit(group_index, username)
+
+        self.profile_added.emit(group.profiles[-1].get_profile_info())
+
+    def remove_profile_from_group(
+        self, group_index: int, profile_username: str
+    ) -> None:
+        group = self._groups[group_index]
+        profile = self._get_profile_model(group_index, profile_username)
+        group.profiles.remove(profile)
+        self.profile_removed.emit(profile_username)
+
+    def get_group_profile_info(
         self, group_index: int, profile_username: str
     ) -> dict:
         profile = self._get_profile_model(group_index, profile_username)
@@ -161,7 +197,10 @@ class GroupsModel(QObject):
             return profile.get_profile_info()
         return None
 
-    def edit_profile_data_from_group(
+    def get_group_profiles_info_list(self, group_index: int) -> list:
+        return self._groups[group_index].get_group_info()['profiles']
+
+    def edit_group_profile_data(
         self,
         group_index: int,
         profile_username: str,
@@ -178,7 +217,7 @@ class GroupsModel(QObject):
                 profile_username, profile.get_profile_info()
             )
 
-    def edit_profile_actions_done_from_group(
+    def edit_group_profile_actions_done(
         self,
         group_index: int,
         profile_username: str,
@@ -195,22 +234,12 @@ class GroupsModel(QObject):
                 profile_username, profile.get_profile_info()
             )
 
-    def edit_profile_status_from_group(
+    def edit_group_profile_status(
         self, group_index: int, profile_username: str, status: str
     ) -> None:
         profile = self._get_profile_model(group_index, profile_username)
         if profile:
             profile.status = status
-            self.profile_edited.emit(
-                profile_username, profile.get_profile_info()
-            )
-
-    def edit_profile_current_log_from_group(
-        self, group_index: int, profile_username: str, current_log: str
-    ) -> None:
-        profile = self._get_profile_model(group_index, profile_username)
-        if profile:
-            profile.current_log = current_log
             self.profile_edited.emit(
                 profile_username, profile.get_profile_info()
             )
@@ -223,3 +252,15 @@ class GroupsModel(QObject):
             if profile.username == profile_username:
                 return profile
         return None
+
+    def _is_device_id_in_use(self, device_id: str) -> bool:
+        for group in self._groups:
+            if group.device_id == device_id:
+                return True
+        return False
+
+    def _is_group_name_in_use(self, group_name: str) -> bool:
+        for group in self._groups:
+            if group.group_name == group_name:
+                return True
+        return False

@@ -28,24 +28,31 @@ class MainView(IGBotGUI, QMainWindow):
         self.setupUi(self)
         self.config_controller = config_controller
         self.devices_controller = devices_controller
-        self.group_controllers = groups_controller
+        self.groups_controller = groups_controller
         self.start_controller = start_controller
         self.add_profiles_view = add_profiles_view
         self.group_views: dict[int, GroupView] = {}
+
         self.config_controller.config_changed.connect(self.set_options_at_view)
         self.config_controller.set_initial_options()
-        self.button_save_config.clicked.connect(self.save_options)
+
         self.devices_controller.device_added.connect(self.set_device_on_view)
         self.devices_controller.device_removed.connect(
             self.remove_device_from_view
         )
         self.devices_controller.show_popup_signal.connect(self.show_popup)
-        self.group_controllers.group_added.connect(self.create_group_frame)
-        self.group_controllers.group_removed.connect(self.remove_group_frame)
-        self.group_controllers.show_popup_signal.connect(self.show_popup)
-        self.group_controllers.set_initial_groups()
+        self.devices_controller.watch_devices()
+
+        self.groups_controller.group_added.connect(self.create_group_frame)
+        self.groups_controller.group_removed.connect(self.remove_group_frame)
+        self.groups_controller.group_edited.connect(self.edit_group_frame)
+
+        self.groups_controller.show_popup_signal.connect(self.show_popup)
+        self.groups_controller.set_repository_to_model()
+
         self.start_controller.show_popup_signal.connect(self.show_popup)
 
+        self.button_save_config.clicked.connect(self.save_options)
         self.button_change_to_wifi.clicked.connect(
             lambda: self.devices_controller.change_devices_connection_to_wifi(
                 self.textedit_usb_devices.toPlainText()
@@ -57,7 +64,6 @@ class MainView(IGBotGUI, QMainWindow):
             )
         )
         self.button_add_profiles.clicked.connect(self.add_profiles_view.show)
-        self.devices_controller.watch_devices()
 
         self.set_page_events()
         self.set_widgets_events()
@@ -634,16 +640,27 @@ class MainView(IGBotGUI, QMainWindow):
         frame_group.setParent(None)
         frame_group.deleteLater()
 
+    def edit_group_frame(self, group_info: dict) -> None:
+        group_index = group_info['index']
+        label_group_name = self.findChild(
+            QtWidgets.QLabel, 'label_group_name_' + str(group_index)
+        )
+        label_group_device = self.findChild(
+            QtWidgets.QLabel, 'label_group_device_' + str(group_index)
+        )
+        label_group_name.setText(group_info['group_name'])
+        label_group_device.setText(group_info['device_id'])
+
     def open_group(self, group_index: int) -> None:
 
         if group_index in self.group_views.keys():
             self.group_views[group_index].show()
             return
 
-        edit_profile_view = EditProfileView(self.group_controllers)
+        edit_profile_view = EditProfileView(self.groups_controller)
         group = GroupView(
             edit_profile_view,
-            self.group_controllers,
+            self.groups_controller,
             self.start_controller,
             group_index,
         )

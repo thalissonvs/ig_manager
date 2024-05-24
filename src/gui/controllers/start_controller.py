@@ -1,3 +1,5 @@
+import traceback
+
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from src.bot.start_facade import StartBotFacade
@@ -22,6 +24,7 @@ class StartController(QObject):
         try:
             self._bot_facade.start(group_index)
         except Exception as e:
+            print(traceback.format_exc())
             self.show_popup_signal.emit(
                 'Erro',
                 f'Erro ao iniciar o bot: {str(e)}',

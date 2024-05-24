@@ -23,6 +23,7 @@ class GroupView(GroupGUI, QMainWindow):
         self._groups_controller = groups_controller
         self._start_controller = start_controller
         self._group_index = group_index
+
         self._groups_controller.profile_added.connect(
             self.create_profile_frame
         )
@@ -30,12 +31,41 @@ class GroupView(GroupGUI, QMainWindow):
             self.remove_profile_frame
         )
         self._groups_controller.profile_edited.connect(self.edit_profile_frame)
+        self._groups_controller.group_edited.connect(self.on_group_edited)
+        self._groups_controller.current_account_changed.connect(
+            self.on_current_account_changed
+        )
+
         self.label_current_log.setText('Aguardando início...')
         self.frame_33.hide()   # temporário
         self.add_initial_profiles()
 
         self.start_worker = StartWorker(self._start_controller)
         self.button_start_all.clicked.connect(self.start_bot)
+
+    def on_current_account_changed(
+        self, group_index: int, username: str
+    ) -> None:
+        if group_index == self._group_index:
+            self._set_all_current_account_labels_to_empty()
+            label_current_account = self.findChild(
+                QtWidgets.QLabel, 'label_current_account_' + username
+            )
+            label_current_account.setText('=>')
+
+    def _set_all_current_account_labels_to_empty(self) -> None:
+        for group_info in self._groups_controller.get_groups_info():
+            if group_info.get('index') == self._group_index:
+                for profile in group_info.get('profiles', []):
+                    label_current_account = self.findChild(
+                        QtWidgets.QLabel,
+                        'label_current_account_' + profile.get('username'),
+                    )
+                    label_current_account.setText('')
+
+    def on_group_edited(self, group_info: dict) -> None:
+        if group_info.get('index') == self._group_index:
+            self.label_current_log.setText(group_info.get('current_log'))
 
     def start_bot(self) -> None:
         self.start_worker.group_index = self._group_index
@@ -212,7 +242,7 @@ class GroupView(GroupGUI, QMainWindow):
 
     def get_profile_info_string(self, profile_username: str) -> str:
 
-        profile = self._groups_controller.get_profile_info_from_group(
+        profile = self._groups_controller.get_group_profile_info(
             self._group_index, profile_username
         )
 
